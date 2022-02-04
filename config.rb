@@ -1,3 +1,6 @@
+set :markdown_engine, :redcarpet
+set :markdown, {fenced_code_blocks: true, smartypants: true, footnotes: true, autolink: true, link_attributes: {rel: "nofollow noopener"}}
+
 # Activate and configure extensions
 # https://middlemanapp.com/advanced/configuration/#configuring-extensions
 
@@ -46,9 +49,8 @@ activate :blog do |blog|
   # blog.month_link = "{year}/{month}.html"
   # blog.day_link = "{year}/{month}/{day}.html"
   # blog.default_extension = ".markdown"
-
-  blog.tag_template = "tag.html"
-  blog.calendar_template = "calendar.html"
+  # blog.tag_template = "tag.html"
+  # blog.calendar_template = "calendar.html"
 
   # Enable pagination
   # blog.paginate = true
@@ -66,11 +68,12 @@ page "/feed.xml", layout: false
 # Methods defined in the helpers block are available in templates
 # https://middlemanapp.com/basics/helper-methods/
 
-# helpers do
-#   def some_helper
-#     'Helping'
-#   end
-# end
+helpers do
+  def title(text)
+    @markdown ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(filter_html: true, no_images: true, no_links: true, no_styles: true))
+    @markdown.render(text)
+  end
+end
 
 # Build-specific configuration
 # https://middlemanapp.com/advanced/configuration/#environment-specific-settings

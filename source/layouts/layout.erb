@@ -1,43 +1,35 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv='X-UA-Compatible' content='ie=edge' />
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <title>Blog Title<%= ' - ' + current_article.title unless current_article.nil? %></title>
+    <title><%= [current_article&.title, "Dingus"].compact.join(" | ") %></title>
+
     <%= feed_tag :atom, "#{blog.options.prefix.to_s}/feed.xml", title: "Atom Feed" %>
     <%= stylesheet_link_tag "site" %>
-    <%= javascript_include_tag "site" %>
   </head>
-  <body>
+  <body class="font-sans bg-fixed dark:bg-neutral-800 dark:text-gray-300">
+    <div id="main" role="main" class="max-w-screen-sm p-4 mx-auto">
+      <header class="mb-12 mt-8 font-serif">
+        <h1 class="font-black text-xl md:text-3xl leading-tight hover:underline"><a href="/">dingus</a></h1>
+        <p class="italic">/ˈdɪŋəs/ Something whose name is unknown or forgotten</p>
+      </header>
 
-    <div id="main" role="main">
-      <%= yield %>
+      <% if is_blog_article? %>
+        <article>
+          <header class="mb-4">
+            <h1 class="text-2xl md:text-4xl font-bold leading-tight"><%= title(current_article.title) %></h1>
+            <p class="text-sm"><%= current_article.date.strftime("%B %Y") %></p>
+          </header>
+          <main class="prose dark:prose-invert">
+            <%= current_article.body %>
+          </main>
+        </article>
+      <% else %>
+        <%= yield %>
+      <% end %>
     </div>
-
-    <aside>
-      <h2>Recent Articles</h2>
-      <ol>
-        <% blog.articles[0...10].each do |article| %>
-          <li><%= link_to article.title, article %> <span><%= article.date.strftime('%b %e') %></span></li>
-        <% end %>
-      </ol>
-
-      <h2>Tags</h2>
-      <ol>
-        <% blog.tags.each do |tag, articles| %>
-          <li><%= link_to "#{tag} (#{articles.size})", tag_path(tag) %></li>
-        <% end %>
-      </ol>
-
-      <h2>By Year</h2>
-      <ol>
-        <% blog.articles.group_by {|a| a.date.year }.each do |year, articles| %>
-          <li><%= link_to "#{year} (#{articles.size})", blog_year_path(year) %></li>
-        <% end %>
-      </ol>
-    </aside>
   </body>
 </html>
