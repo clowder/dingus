@@ -1,6 +1,12 @@
 # Activate and configure extensions
 # https://middlemanapp.com/advanced/configuration/#configuring-extensions
 
+activate :external_pipeline,
+  name: :tailwind,
+  command: build? ? 'yarn run build' : 'yarn run dev',
+  source: "tmp/assets",
+  latency: 1
+
 activate :autoprefixer do |prefix|
   prefix.browsers = "last 2 versions"
 end
