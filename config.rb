@@ -80,4 +80,5 @@ end
 
 configure :build do
   config[:build_dir] = "./docs"
+  activate :asset_hash
 end
