@@ -5,26 +5,210 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2022-02-04T11:25:00+00:00</updated>
+  <updated>2022-02-18T12:38:00+00:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Server-sent events with Rails and Rack hijack</title>
+    <link rel="alternate" href="http://blog.url.com/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html"/>
+    <id>http://blog.url.com/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html</id>
+    <published>2022-02-18T12:38:00+00:00</published>
+    <updated>2022-02-20T19:02:19+00:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;p&gt;Server-sent events&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt; (SSE) are a simple way to push data to clients over
+plain-old HTTP and rails has also provided a tidy DLS for SSE (via
+&lt;code class="prettyprint"&gt;[ActionController::Live]&lt;/code&gt;) since Rails 4.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately long-running HTTP connections in Rails controllers tie-up server
+threads, causing incoming requests to queue. Borrowing from Action Cable it&amp;rsquo;s
+possible to move these long running connections to their own threads and put
+those server threads back to work serving incoming requests.&lt;/p&gt;
+
+&lt;p&gt;The secret sauce is Rack &amp;ldquo;hijack&amp;rdquo;&lt;sup id="fnref2"&gt;&lt;a href="#fn2"&gt;2&lt;/a&gt;&lt;/sup&gt; which let&amp;rsquo;s us take control of the actual
+&lt;code class="prettyprint"&gt;[TCPSocket]&lt;/code&gt; backing the incoming request. When combined with the myriad
+concurrency primitives in modern Rails apps (via &lt;a href="https://github.com/ruby-concurrency/concurrent-ruby" rel="nofollow noopener"&gt;concurrent-ruby&lt;/a&gt;) it&amp;rsquo;s
+possible to handle as many open connections as system RAM and &lt;code class="prettyprint"&gt;ulimit&lt;/code&gt; will
+allow.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ApplicationController&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ActionController&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;API&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;stream&lt;/span&gt;
+    &lt;span class="c1"&gt;# Get the `[TCPSocket]` instance backing the request&lt;/span&gt;
+    &lt;span class="n"&gt;io&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;env&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"rack.hijack"&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Send HTTP response line and relevant headers&lt;/span&gt;
+    &lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="s2"&gt;"HTTP/1.1 200&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="p"&gt;\&lt;/span&gt;
+      &lt;span class="s2"&gt;"Content-Type: text/event-stream&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="p"&gt;\&lt;/span&gt;
+      &lt;span class="s2"&gt;"Cache-Control: no-cache&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="p"&gt;\&lt;/span&gt;
+      &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Periodically spawn a thread to send a keepalive&lt;/span&gt;
+    &lt;span class="n"&gt;keepalive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Concurrent&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;TimerTask&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;execute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;execution_interval: &lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;":keepalive&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Watch for and handle failed keepalives&lt;/span&gt;
+    &lt;span class="n"&gt;keepalive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;add_observer&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;_time&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_result&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ex&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+      &lt;span class="k"&gt;break&lt;/span&gt; &lt;span class="k"&gt;unless&lt;/span&gt; &lt;span class="n"&gt;ex&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;present?&lt;/span&gt;
+
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;ex&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;is_a?&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Errno&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;EPIPE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="c1"&gt;# We expect "broken pipe" errors if we've written to a closed socket&lt;/span&gt;
+        &lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Client disconnected"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="k"&gt;end&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Stop the timer task spawning new threads&lt;/span&gt;
+      &lt;span class="n"&gt;keepalive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;shutdown&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Close the socket&lt;/span&gt;
+      &lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;close&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Dereference everything so it can be garbage collected&lt;/span&gt;
+      &lt;span class="n"&gt;io&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;keepalive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kp"&gt;nil&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Testing our new action with curl we see the following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="nv"&gt;$&amp;gt;&lt;/span&gt; curl &lt;span class="nt"&gt;-v&lt;/span&gt; &lt;span class="nt"&gt;--no-buffer&lt;/span&gt; http://localhost:3000/
+&lt;span class="k"&gt;*&lt;/span&gt;   Trying ::1:3000...
+&lt;span class="k"&gt;*&lt;/span&gt; Connected to localhost &lt;span class="o"&gt;(&lt;/span&gt;::1&lt;span class="o"&gt;)&lt;/span&gt; port 3000 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="c"&gt;#0)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; GET / HTTP/1.1
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; Host: localhost:3000
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; User-Agent: curl/7.77.0
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; Accept: &lt;span class="k"&gt;*&lt;/span&gt;/&lt;span class="k"&gt;*&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;*&lt;/span&gt; Mark bundle as not supporting multiuse
+&amp;lt; HTTP/1.1 200
+&amp;lt; Content-Type: text/event-stream
+&amp;lt; Cache-Control: no-cache
+&lt;span class="k"&gt;*&lt;/span&gt; no chunk, no close, no size. Assume close to signal end
+&amp;lt;
+:keepalive
+
+:keepalive
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;By &amp;ldquo;hijacking&amp;rdquo; the socket and passing it to a separate thread of sending data
+it&amp;rsquo;s possible to hold open as many connections as &lt;code class="prettyprint"&gt;ulimit&lt;/code&gt; or system memory
+will allow, event on a single threaded server, while also still serving regular
+requests.&lt;/p&gt;
+
+&lt;p&gt;Reusing the configured Action Cable pub/sub adapter, available through the
+global &lt;code class="prettyprint"&gt;ActionCable.server.pubsub&lt;/code&gt;, it&amp;rsquo;s possible to subscribe to and deliver
+events to clients in near realtime.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ApplicationController&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ActionController&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;API&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;stream&lt;/span&gt;
+    &lt;span class="c1"&gt;# Get the `[TCPSocket]` instance backing the request&lt;/span&gt;
+    &lt;span class="n"&gt;io&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;env&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"rack.hijack"&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nf"&gt;call&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Handler for new broadcasts&lt;/span&gt;
+    &lt;span class="n"&gt;on_message&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"data: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Send HTTP response line and relevant headers&lt;/span&gt;
+    &lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="s2"&gt;"HTTP/1.1 200&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="p"&gt;\&lt;/span&gt;
+      &lt;span class="s2"&gt;"Content-Type: text/event-stream&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="p"&gt;\&lt;/span&gt;
+      &lt;span class="s2"&gt;"Cache-Control: no-cache&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="p"&gt;\&lt;/span&gt;
+      &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="se"&gt;\r\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Subscribe to the "/sse/test" channel&lt;/span&gt;
+    &lt;span class="no"&gt;ActionCable&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;server&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;pubsub&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;subscribe&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"/sse/test"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;on_message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Periodically spawn a thread to send a keepalive&lt;/span&gt;
+    &lt;span class="n"&gt;keepalive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Concurrent&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;TimerTask&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;execute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;execution_interval: &lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;":keepalive&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Watch for and handle failed keepalives&lt;/span&gt;
+    &lt;span class="n"&gt;keepalive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;add_observer&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;_time&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_result&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ex&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+      &lt;span class="k"&gt;break&lt;/span&gt; &lt;span class="k"&gt;unless&lt;/span&gt; &lt;span class="n"&gt;ex&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;present?&lt;/span&gt;
+
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;ex&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;is_a?&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;Errno&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;EPIPE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="c1"&gt;# We expect "broken pipe" errors if we've written to a closed socket&lt;/span&gt;
+        &lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Client disconnected"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="k"&gt;end&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Unsubscribe from the "/sse/test" channel&lt;/span&gt;
+      &lt;span class="no"&gt;ActionCable&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;server&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;pubsub&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;unsubscribe&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"/sse/test"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;on_message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Stop the timer task spawning new threads&lt;/span&gt;
+      &lt;span class="n"&gt;keepalive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;shutdown&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Close the socket&lt;/span&gt;
+      &lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;close&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Dereference everything so it can be garbage collected&lt;/span&gt;
+      &lt;span class="n"&gt;io&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;keepalive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;on_message&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kp"&gt;nil&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Broadcasting from the Rails console:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="nv"&gt;$&amp;gt;&lt;/span&gt; bin/rails c
+Loading development environment &lt;span class="o"&gt;(&lt;/span&gt;Rails 7.0.2&lt;span class="o"&gt;)&lt;/span&gt;
+irb&lt;span class="o"&gt;(&lt;/span&gt;main&lt;span class="o"&gt;)&lt;/span&gt;:001:0&amp;gt; ActionCable.server.pubsub.broadcast&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"/sse/test"&lt;/span&gt;, &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"foo"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"bar"&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;.to_json&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In curl we see the following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="nv"&gt;$&amp;gt;&lt;/span&gt; curl &lt;span class="nt"&gt;-v&lt;/span&gt; &lt;span class="nt"&gt;--no-buffer&lt;/span&gt; http://localhost:3000/
+&lt;span class="k"&gt;*&lt;/span&gt;   Trying ::1:3000...
+&lt;span class="k"&gt;*&lt;/span&gt; Connected to localhost &lt;span class="o"&gt;(&lt;/span&gt;::1&lt;span class="o"&gt;)&lt;/span&gt; port 3000 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="c"&gt;#0)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; GET / HTTP/1.1
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; Host: localhost:3000
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; User-Agent: curl/7.77.0
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; Accept: &lt;span class="k"&gt;*&lt;/span&gt;/&lt;span class="k"&gt;*&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;*&lt;/span&gt; Mark bundle as not supporting multiuse
+&amp;lt; HTTP/1.1 200
+&amp;lt; Content-Type: text/event-stream
+&amp;lt; Cache-Control: no-cache
+&lt;span class="k"&gt;*&lt;/span&gt; no chunk, no close, no size. Assume close to signal end
+&amp;lt;
+:keepalive
+
+:keepalive
+
+data: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"foo"&lt;/span&gt;:&lt;span class="s2"&gt;"bar"&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+
+:keepalive
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;span class="text-7xl cursor-help" title="You've got mail"&gt;📬&lt;/span&gt;&lt;/p&gt;
+
+&lt;div class="footnotes"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+
+&lt;li id="fn1"&gt;
+&lt;p&gt;&lt;a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events" rel="nofollow noopener"&gt;Server-sent events living standard&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li id="fn2"&gt;
+&lt;p&gt;&lt;a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener"&gt;Rack spec&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref2"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+  </entry>
   <entry>
     <title>`CURRENT_TIMESTAMP`</title>
     <link rel="alternate" href="http://blog.url.com/2022/02/04/current-timestamp.html"/>
     <id>http://blog.url.com/2022/02/04/current-timestamp.html</id>
     <published>2022-02-04T11:25:00+00:00</published>
-    <updated>2022-02-04T16:25:58+00:00</updated>
+    <updated>2022-02-18T12:39:09+00:00</updated>
     <author>
       <name>Article Author</name>
     </author>
-    <content type="html">&lt;p&gt;Turns out calling &lt;code&gt;CURRENT_TIMESTAMP&lt;/code&gt; within a transaction will always return
+    <content type="html">&lt;p&gt;Turns out calling &lt;code class="prettyprint"&gt;CURRENT_TIMESTAMP&lt;/code&gt; within a transaction will always return
 the time the transaction began&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt;. In my mental model I&amp;rsquo;d always thought of it
 being the clock time for the statement.&lt;/p&gt;
 
-&lt;p&gt;Postgres aliases &lt;code&gt;CURRENT_TIMESTAMP&lt;/code&gt; to &lt;code&gt;transaction_timestamp()&lt;/code&gt; which is a
-more intention revealing name. There&amp;rsquo;s also the well named &lt;code&gt;clock_timestamp()&lt;/code&gt;
-and &lt;code&gt;statement_timestamp()&lt;/code&gt;, both of which simply do what-it-says-on-the-tin.&lt;/p&gt;
+&lt;p&gt;Postgres aliases &lt;code class="prettyprint"&gt;CURRENT_TIMESTAMP&lt;/code&gt; to &lt;code class="prettyprint"&gt;transaction_timestamp()&lt;/code&gt; which is a
+more intention revealing name. There&amp;rsquo;s also the well named &lt;code class="prettyprint"&gt;clock_timestamp()&lt;/code&gt;
+and &lt;code class="prettyprint"&gt;statement_timestamp()&lt;/code&gt;, both of which simply do what-it-says-on-the-tin.&lt;/p&gt;
 
 &lt;div class="footnotes"&gt;
 &lt;hr&gt;

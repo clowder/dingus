@@ -5,7 +5,7 @@
     <meta http-equiv='X-UA-Compatible' content='ie=edge' />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <title>Dingus</title>
+    <title>Server-sent events with Rails and Rack hijack | Dingus</title>
 
     <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
     <link href="/stylesheets/site-ccb9906d.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
@@ -17,14 +17,14 @@
         <p class="italic">/ˈdɪŋəs/ Something whose name is unknown or forgotten</p>
       </header>
 
-          <article class="mb-24">
-    <header class="mb-4">
-      <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html"><p>Server-sent events with Rails and Rack hijack</p>
-</a></h2>
-      <p class="text-sm">February 2022</p>
-    </header>
-    <main class="prose dark:prose-invert">
-      <p>Server-sent events<sup id="fnref1"><a href="#fn1">1</a></sup> (SSE) are a simple way to push data to clients over
+        <article>
+          <header class="mb-4">
+            <h1 class="text-2xl md:text-4xl font-bold leading-tight"><p>Server-sent events with Rails and Rack hijack</p>
+</h1>
+            <p class="text-sm">February 2022</p>
+          </header>
+          <main class="prose dark:prose-invert prose-pre:bg-inherit">
+            <p>Server-sent events<sup id="fnref1"><a href="#fn1">1</a></sup> (SSE) are a simple way to push data to clients over
 plain-old HTTP and rails has also provided a tidy DLS for SSE (via
 <code class="prettyprint">[ActionController::Live]</code>) since Rails 4.</p>
 
@@ -198,37 +198,8 @@ data: <span class="o">{</span><span class="s2">"foo"</span>:<span class="s2">"ba
 </ol>
 </div>
 
-    </main>
-  </article>
-  <article class="mb-24">
-    <header class="mb-4">
-      <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/02/04/current-timestamp.html"><p><code>CURRENT_TIMESTAMP</code></p>
-</a></h2>
-      <p class="text-sm">February 2022</p>
-    </header>
-    <main class="prose dark:prose-invert">
-      <p>Turns out calling <code class="prettyprint">CURRENT_TIMESTAMP</code> within a transaction will always return
-the time the transaction began<sup id="fnref1"><a href="#fn1">1</a></sup>. In my mental model I&rsquo;d always thought of it
-being the clock time for the statement.</p>
-
-<p>Postgres aliases <code class="prettyprint">CURRENT_TIMESTAMP</code> to <code class="prettyprint">transaction_timestamp()</code> which is a
-more intention revealing name. There&rsquo;s also the well named <code class="prettyprint">clock_timestamp()</code>
-and <code class="prettyprint">statement_timestamp()</code>, both of which simply do what-it-says-on-the-tin.</p>
-
-<div class="footnotes">
-<hr>
-<ol>
-
-<li id="fn1">
-<p><a href="https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT" rel="nofollow noopener">https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
-</li>
-
-</ol>
-</div>
-
-    </main>
-  </article>
-
+          </main>
+        </article>
     </div>
   </body>
 </html>
