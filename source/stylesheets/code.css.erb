@@ -1,0 +1,6 @@
+<%= Grayscale::Light.render(scope: ".highlight") %>
+
+<%# Dark clobbers Light because it defines a background colour %>
+@media (prefers-color-scheme: light) {
+  <%= Grayscale::Dark.render(scope: ".highlight") %>
+}

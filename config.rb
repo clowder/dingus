@@ -1,5 +1,14 @@
+require "lib/grayscale"
+
 set :markdown_engine, :redcarpet
-set :markdown, {fenced_code_blocks: true, smartypants: true, footnotes: true, autolink: true, link_attributes: {rel: "nofollow noopener"}}
+set :markdown, {
+  autolink: true,
+  fenced_code_blocks: true,
+  footnotes: true,
+  link_attributes: {rel: "nofollow noopener"},
+  prettify: true,
+  smartypants: true,
+}
 
 # Activate and configure extensions
 # https://middlemanapp.com/advanced/configuration/#configuring-extensions
@@ -13,6 +22,8 @@ activate :external_pipeline,
 activate :autoprefixer do |prefix|
   prefix.browsers = "last 2 versions"
 end
+
+activate :syntax
 
 # Layouts
 # https://middlemanapp.com/basics/layouts/
