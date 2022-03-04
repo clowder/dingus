@@ -8,6 +8,7 @@ set :markdown, {
   link_attributes: {rel: "nofollow noopener"},
   prettify: true,
   smartypants: true,
+  tables: true,
 }
 
 # Activate and configure extensions
