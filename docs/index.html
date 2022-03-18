@@ -8,7 +8,7 @@
     <title>Dingus</title>
 
     <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
-    <link href="/stylesheets/site-c9c62229.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
+    <link href="/stylesheets/site-47a7a54b.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
   </head>
   <body class="font-sans bg-fixed dark:bg-neutral-800 dark:text-gray-300">
     <div id="main" role="main" class="max-w-screen-sm p-4 mx-auto">
@@ -18,6 +18,73 @@
       </header>
 
           <article class="mb-24">
+    <header class="mb-4">
+      <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/03/18/active-record-find-each-using-cursors.html"><p>Active Record <code>find_each</code> using Postges cursors</p>
+</a></h2>
+      <p class="text-sm">March 2022</p>
+    </header>
+    <main class="prose dark:prose-invert">
+      <p>Active Record&rsquo;s <a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener"><code class="prettyprint">find_each</code></a> is the go-to method for loading a large number
+of records in an efficient way. Under the hood it uses <code class="prettyprint">OFFSET</code> and <code class="prettyprint">LIMIT</code> to
+load records in batches and <code class="prettyprint">yield</code> them to our block. One drawback to this
+approach is Rails requires records to be ordered by their primary key, despite
+Postges only requiring the <code class="prettyprint">ORDER</code> to be unique<sup id="fnref1"><a href="#fn1">1</a></sup>.</p>
+
+<p>Not ideal!</p>
+
+<p>With Postgres it&rsquo;s possible to solve this problem using another tool called a
+cursor. These can wrap <em>any</em> query, ordered any way,  and make it possible to
+fetch it&rsquo;s results incrementally<sup id="fnref2"><a href="#fn2">2</a></sup>. But unfortuantly Rails doesn&rsquo;t have
+native support for Postgres cursors.</p>
+
+<p>Spelunking Rails&rsquo;s issues on Github your author stumbled across
+<a href="https://github.com/rails/rails/issues/28085#issuecomment-457909168" rel="nofollow noopener">rails/rails#28085</a>, which contains a monkey patch impementing a variant of
+<code class="prettyprint">find_each</code> using cursors.</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">module</span> <span class="nn">ActiveRecord</span>
+  <span class="k">module</span> <span class="nn">Batches</span>
+    <span class="c1"># Implements `find_each` variant using cursors. Source:</span>
+    <span class="c1"># https://github.com/rails/rails/issues/28085#issuecomment-457909168</span>
+    <span class="c1">#</span>
+    <span class="c1"># Our changes:</span>
+    <span class="c1"># * `break` condition avoids extra iteration on small sets</span>
+    <span class="c1"># * use Active Records safe string replacement in `find_by_sql`</span>
+    <span class="c1"># * simplify cursor definition based on Postgres defaults (more inline)</span>
+    <span class="c1"># * remove redundant references `self`</span>
+    <span class="k">def</span> <span class="nf">batched_each</span><span class="p">(</span><span class="ss">count: </span><span class="mi">1000</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">transaction</span> <span class="k">do</span>
+        <span class="c1"># Cursors are created `WITHOUT HOLD` by default and cannot be used</span>
+        <span class="c1"># outside of the transaction that created them. `NO SCROLL` specifies</span>
+        <span class="c1"># the cursor cannot be used to retrieve rows in a non-sequential</span>
+        <span class="c1"># fashion.</span>
+        <span class="n">connection</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="s2">"DECLARE pc NO SCROLL CURSOR FOR </span><span class="si">#{</span><span class="n">to_sql</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="kp">loop</span> <span class="k">do</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">find_by_sql</span><span class="p">([</span><span class="s2">"FETCH FORWARD ? FROM pc"</span><span class="p">,</span> <span class="n">count</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+          <span class="k">break</span> <span class="k">if</span> <span class="n">result</span><span class="p">.</span><span class="nf">count</span> <span class="o">&lt;</span> <span class="n">count</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<div class="footnotes">
+<hr>
+<ol>
+
+<li id="fn1">
+<p><a href="https://www.postgresql.org/docs/current/queries-limit.html" rel="nofollow noopener">https://www.postgresql.org/docs/current/queries-limit.html</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+</li>
+
+<li id="fn2">
+<p><a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener">https://www.postgresql.org/docs/current/sql-declare.html</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+    </main>
+  </article>
+  <article class="mb-24">
     <header class="mb-4">
       <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/03/04/recursive-sql.html"><p>Recursive SQL</p>
 </a></h2>
