@@ -8,7 +8,7 @@
     <title>Dingus</title>
 
     <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
-    <link href="/stylesheets/site-47a7a54b.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
+    <link href="/stylesheets/site-38227ecf.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
   </head>
   <body class="font-sans bg-fixed dark:bg-neutral-800 dark:text-gray-300">
     <div id="main" role="main" class="max-w-screen-sm p-4 mx-auto">
@@ -18,6 +18,30 @@
       </header>
 
           <article class="mb-24">
+    <header class="mb-4">
+      <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/04/01/cheap-context-switching-with-git-worktree.html"><p>Cheap context switching with git-worktree</p>
+</a></h2>
+      <p class="text-sm">April 2022</p>
+    </header>
+    <main class="prose dark:prose-invert">
+      <p>Git supports multiple checkouts from a single repository, allowing for multiple
+working directories linked to a single repository.</p>
+
+<p>For arguments sake let&rsquo;s say you&rsquo;re working in a feature branch and spot a
+typo. Damn! Instead of committing work-in-progress to switch branches
+<a href="https://git-scm.com/docs/git-worktree" rel="nofollow noopener">git-worktree</a> can checkout another branch to a temporary working directory.</p>
+<div class="highlight"><pre class="highlight plaintext"><code>$ git worktree add ../copy-changes main
+$ cd ../copy-changes
+</code></pre></div>
+<p>Once complete you return to you&rsquo;re main working directory and clean-up.</p>
+<div class="highlight"><pre class="highlight plaintext"><code>$ cd ../web-app
+$ git worktree remove ../copy-changes
+</code></pre></div>
+<p><span class="text-7xl cursor-wand" title="Git is magic">🧙🏻‍♂️</span></p>
+
+    </main>
+  </article>
+  <article class="mb-24">
     <header class="mb-4">
       <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/03/18/active-record-find-each-using-cursors.html"><p>Active Record <code>find_each</code> using Postges cursors</p>
 </a></h2>
