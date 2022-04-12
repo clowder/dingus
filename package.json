@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@tailwindcss/typography": "^0.5.1",
-    "postcss": "^8.4.6",
-    "tailwindcss": "^3.0.18"
+    "@tailwindcss/typography": "^0.5.2",
+    "postcss": "^8.4.12",
+    "tailwindcss": "^3.0.23"
   },
   "scripts": {
     "dev": "tailwindcss -i ./source/stylesheets/site.css -o ./tmp/assets/stylesheets/site.css --watch",
