@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://dingus.clowder.name/sitemap.xml

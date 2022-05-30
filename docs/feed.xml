@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Blog Name</title>
-  <subtitle>Blog subtitle</subtitle>
-  <id>http://blog.url.com/</id>
-  <link href="http://blog.url.com/"/>
-  <link href="http://blog.url.com/feed.xml" rel="self"/>
+  <title>Dingus</title>
+  <id>https://dingus.clowder.name/</id>
+  <link href="https://dingus.clowder.name/"/>
+  <link href="https://dingus.clowder.name/feed.xml" rel="self"/>
   <updated>2022-05-30T18:30:00+01:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
   <entry>
     <title>Highlighting search results with Textacular</title>
-    <link rel="alternate" href="http://blog.url.com/2022/05/30/highlighting-search-results-with-textacular.html"/>
-    <id>http://blog.url.com/2022/05/30/highlighting-search-results-with-textacular.html</id>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/05/30/highlighting-search-results-with-textacular.html"/>
+    <id>https://dingus.clowder.name/2022/05/30/highlighting-search-results-with-textacular.html</id>
     <published>2022-05-30T18:30:00+01:00</published>
     <updated>2022-05-30T18:57:56+01:00</updated>
     <author>
@@ -59,8 +58,8 @@ be declared ahead of time.&lt;/p&gt;
   </entry>
   <entry>
     <title>Cheap context switching with git-worktree</title>
-    <link rel="alternate" href="http://blog.url.com/2022/04/01/cheap-context-switching-with-git-worktree.html"/>
-    <id>http://blog.url.com/2022/04/01/cheap-context-switching-with-git-worktree.html</id>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/04/01/cheap-context-switching-with-git-worktree.html"/>
+    <id>https://dingus.clowder.name/2022/04/01/cheap-context-switching-with-git-worktree.html</id>
     <published>2022-04-01T11:55:00+01:00</published>
     <updated>2022-04-01T15:00:12+01:00</updated>
     <author>
@@ -84,8 +83,8 @@ $ git worktree remove ../copy-changes
   </entry>
   <entry>
     <title>Active Record `find_each` using Postges cursors</title>
-    <link rel="alternate" href="http://blog.url.com/2022/03/18/active-record-find-each-using-cursors.html"/>
-    <id>http://blog.url.com/2022/03/18/active-record-find-each-using-cursors.html</id>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/03/18/active-record-find-each-using-cursors.html"/>
+    <id>https://dingus.clowder.name/2022/03/18/active-record-find-each-using-cursors.html</id>
     <published>2022-03-18T13:26:00+00:00</published>
     <updated>2022-03-18T14:41:44+00:00</updated>
     <author>
@@ -152,8 +151,8 @@ native support for Postgres cursors.&lt;/p&gt;
   </entry>
   <entry>
     <title>Recursive SQL</title>
-    <link rel="alternate" href="http://blog.url.com/2022/03/04/recursive-sql.html"/>
-    <id>http://blog.url.com/2022/03/04/recursive-sql.html</id>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/03/04/recursive-sql.html"/>
+    <id>https://dingus.clowder.name/2022/03/04/recursive-sql.html</id>
     <published>2022-03-04T12:25:00+00:00</published>
     <updated>2022-03-04T16:16:50+00:00</updated>
     <author>
@@ -251,8 +250,8 @@ time I&amp;rsquo;ve come to love munging data using SQL.&lt;/p&gt;
   </entry>
   <entry>
     <title>Server-sent events with Rails and Rack hijack</title>
-    <link rel="alternate" href="http://blog.url.com/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html"/>
-    <id>http://blog.url.com/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html</id>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html"/>
+    <id>https://dingus.clowder.name/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html</id>
     <published>2022-02-18T12:38:00+00:00</published>
     <updated>2022-02-20T19:02:19+00:00</updated>
     <author>
@@ -435,8 +434,8 @@ data: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"foo"&lt;/span&
   </entry>
   <entry>
     <title>`CURRENT_TIMESTAMP`</title>
-    <link rel="alternate" href="http://blog.url.com/2022/02/04/current-timestamp.html"/>
-    <id>http://blog.url.com/2022/02/04/current-timestamp.html</id>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/02/04/current-timestamp.html"/>
+    <id>https://dingus.clowder.name/2022/02/04/current-timestamp.html</id>
     <published>2022-02-04T11:25:00+00:00</published>
     <updated>2022-05-27T17:05:09+01:00</updated>
     <author>
