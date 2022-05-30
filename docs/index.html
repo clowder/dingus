@@ -19,6 +19,53 @@
 
           <article class="mb-24">
     <header class="mb-4">
+      <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/05/30/highlighting-search-results-with-textacular.html"><p>Highlighting search results with Textacular</p>
+</a></h2>
+      <p class="text-sm">May 2022</p>
+    </header>
+    <main class="prose dark:prose-invert">
+      <p>It&rsquo;s possible to leverage Postgres&rsquo;s <code class="prettyprint">ts_headline</code><sup id="fnref1"><a href="#fn1">1</a></sup> to add highlighting of
+matched fragments in search results. With a caveat, the search fields need to
+be declared ahead of time.</p>
+
+<p>To highlight a <code class="prettyprint">basic_search</code> each column to be highlighted needs to be
+<code class="prettyprint">SELECT</code>-ed using <code class="prettyprint">ts_headline</code> with the query string parsed with
+<code class="prettyprint">plainto_tsquery</code>.</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">Post</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">basic_search</span><span class="p">(</span><span class="ss">title: </span><span class="n">query</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">sanitize_sql_array</span><span class="p">([</span><span class="s2">"ts_headline(title, plainto_tsquery(?))"</span><span class="p">,</span> <span class="n">query</span><span class="p">])</span><span class="si">}</span><span class="s2"> as title_highlighted"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Using this blog&rsquo;s post titles for testing we see:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>[0] pry(main)&gt; Post.search("server Rack").map(&amp;:attributes)
+  Post Load (3.1ms)  SELECT "posts".*, COALESCE(ts_rank(to_tsvector('english', "posts"."title"::text), plainto_tsquery('english', 'server\ Rack'::text)), 0) AS "rank35483819984107261", ts_headline(title, plainto_tsquery('server Rack')) as title_highlighted FROM "posts" WHERE (to_tsvector('english', "posts"."title"::text) @@ plainto_tsquery('english', 'server\ Rack'::text)) ORDER BY "rank35483819984107261" DESC
+=&gt; [{"id"=&gt;4,
+  "title"=&gt;"Server-sent events with Rails and Rack hijack",
+  "created_at"=&gt;Mon, 30 May 2022 17:30:29.806047000 UTC +00:00,
+  "updated_at"=&gt;Mon, 30 May 2022 17:30:29.806047000 UTC +00:00,
+  "rank35483819984107261"=&gt;0.085297264,
+  "title_highlighted"=&gt;"&lt;b&gt;Server&lt;/b&gt;-sent events with Rails and &lt;b&gt;Rack&lt;/b&gt; hijack"}]
+</code></pre></div>
+<p>To work for an <code class="prettyprint">advanced_search</code> the query string should be passed to
+<code class="prettyprint">to_tsquery</code> and <code class="prettyprint">web_search</code> to <code class="prettyprint">websearch_to_tsquery</code>.</p>
+
+<div class="footnotes">
+<hr>
+<ol>
+
+<li id="fn1">
+<p><a href="https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE" rel="nofollow noopener">https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+    </main>
+  </article>
+  <article class="mb-24">
+    <header class="mb-4">
       <h2 class="text-2xl md:text-4xl font-bold leading-tight"><a href="/2022/04/01/cheap-context-switching-with-git-worktree.html"><p>Cheap context switching with git-worktree</p>
 </a></h2>
       <p class="text-sm">April 2022</p>

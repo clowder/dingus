@@ -5,10 +5,58 @@
   <id>http://blog.url.com/</id>
   <link href="http://blog.url.com/"/>
   <link href="http://blog.url.com/feed.xml" rel="self"/>
-  <updated>2022-04-01T11:55:00+01:00</updated>
+  <updated>2022-05-30T18:30:00+01:00</updated>
   <author>
     <name>Blog Author</name>
   </author>
+  <entry>
+    <title>Highlighting search results with Textacular</title>
+    <link rel="alternate" href="http://blog.url.com/2022/05/30/highlighting-search-results-with-textacular.html"/>
+    <id>http://blog.url.com/2022/05/30/highlighting-search-results-with-textacular.html</id>
+    <published>2022-05-30T18:30:00+01:00</published>
+    <updated>2022-05-30T18:57:56+01:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;p&gt;It&amp;rsquo;s possible to leverage Postgres&amp;rsquo;s &lt;code class="prettyprint"&gt;ts_headline&lt;/code&gt;&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt; to add highlighting of
+matched fragments in search results. With a caveat, the search fields need to
+be declared ahead of time.&lt;/p&gt;
+
+&lt;p&gt;To highlight a &lt;code class="prettyprint"&gt;basic_search&lt;/code&gt; each column to be highlighted needs to be
+&lt;code class="prettyprint"&gt;SELECT&lt;/code&gt;-ed using &lt;code class="prettyprint"&gt;ts_headline&lt;/code&gt; with the query string parsed with
+&lt;code class="prettyprint"&gt;plainto_tsquery&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Post&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ApplicationRecord&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nc"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;basic_search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;title: &lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;select&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;sanitize_sql_array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;"ts_headline(title, plainto_tsquery(?))"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; as title_highlighted"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Using this blog&amp;rsquo;s post titles for testing we see:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;[0] pry(main)&amp;gt; Post.search("server Rack").map(&amp;amp;:attributes)
+  Post Load (3.1ms)  SELECT "posts".*, COALESCE(ts_rank(to_tsvector('english', "posts"."title"::text), plainto_tsquery('english', 'server\ Rack'::text)), 0) AS "rank35483819984107261", ts_headline(title, plainto_tsquery('server Rack')) as title_highlighted FROM "posts" WHERE (to_tsvector('english', "posts"."title"::text) @@ plainto_tsquery('english', 'server\ Rack'::text)) ORDER BY "rank35483819984107261" DESC
+=&amp;gt; [{"id"=&amp;gt;4,
+  "title"=&amp;gt;"Server-sent events with Rails and Rack hijack",
+  "created_at"=&amp;gt;Mon, 30 May 2022 17:30:29.806047000 UTC +00:00,
+  "updated_at"=&amp;gt;Mon, 30 May 2022 17:30:29.806047000 UTC +00:00,
+  "rank35483819984107261"=&amp;gt;0.085297264,
+  "title_highlighted"=&amp;gt;"&amp;lt;b&amp;gt;Server&amp;lt;/b&amp;gt;-sent events with Rails and &amp;lt;b&amp;gt;Rack&amp;lt;/b&amp;gt; hijack"}]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;To work for an &lt;code class="prettyprint"&gt;advanced_search&lt;/code&gt; the query string should be passed to
+&lt;code class="prettyprint"&gt;to_tsquery&lt;/code&gt; and &lt;code class="prettyprint"&gt;web_search&lt;/code&gt; to &lt;code class="prettyprint"&gt;websearch_to_tsquery&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class="footnotes"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+
+&lt;li id="fn1"&gt;
+&lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE" rel="nofollow noopener"&gt;https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+  </entry>
   <entry>
     <title>Cheap context switching with git-worktree</title>
     <link rel="alternate" href="http://blog.url.com/2022/04/01/cheap-context-switching-with-git-worktree.html"/>
@@ -390,7 +438,7 @@ data: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"foo"&lt;/span&
     <link rel="alternate" href="http://blog.url.com/2022/02/04/current-timestamp.html"/>
     <id>http://blog.url.com/2022/02/04/current-timestamp.html</id>
     <published>2022-02-04T11:25:00+00:00</published>
-    <updated>2022-03-04T12:25:49+00:00</updated>
+    <updated>2022-05-27T17:05:09+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
