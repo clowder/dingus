@@ -5,10 +5,35 @@
   <id>https://dingus.clowder.name/</id>
   <link href="https://dingus.clowder.name/"/>
   <link href="https://dingus.clowder.name/feed.xml" rel="self"/>
-  <updated>2022-05-30T18:30:00+01:00</updated>
+  <updated>2022-06-10T16:46:00+01:00</updated>
   <author>
     <name>Chris Lowder</name>
   </author>
+  <entry>
+    <title>Compiling the Raspberry Pi Pico SDK on Apple Silicon</title>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/06/10/compiling-the-raspberry-pi-pico-sdk-on-apple-silicon.html"/>
+    <id>https://dingus.clowder.name/2022/06/10/compiling-the-raspberry-pi-pico-sdk-on-apple-silicon.html</id>
+    <published>2022-06-10T16:46:00+01:00</published>
+    <updated>2022-06-16T14:58:31+01:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <summary type="html">Get up-and-running building apps for the Raspberry&amp;nbsp;Pi&amp;nbsp;Pico on MacOS running on Apple Silicon.</summary>
+    <content type="html">&lt;p&gt;Getting up-and-running building apps with the Raspberry&amp;nbsp;Pi&amp;nbsp;Pico SDK
+on MacOS isn&amp;rsquo;t straight forward if your machine runs on Apple silicon.Homebrew
+installs a broken version ARM GCC tool-chain (v11.2). This version throws
+seemingly arbitrary &lt;code class="prettyprint"&gt;internal compiler error: Illegal instruction&lt;/code&gt; errors in
+builds.&lt;/p&gt;
+
+&lt;p&gt;Fortunately the previous version (v10.3) doesn&amp;rsquo;t suffer from the same issue.
+But Homebrew makes it tricky to past previous versions of cask formula,
+requiring users to dig out the revision and host a &amp;ldquo;tap&amp;rdquo; to install from. To
+make it easier to get up-and-running quickly I&amp;rsquo;ve pulled together the Homebrew
+tap, SDK, a &amp;ldquo;hello world&amp;rdquo; application and a README into a repo:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/clowder/rpi-pico-macos-starter" rel="nofollow noopener"&gt;https://github.com/clowder/rpi-pico-macos-starter&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Highlighting search results with Textacular</title>
     <link rel="alternate" href="https://dingus.clowder.name/2022/05/30/highlighting-search-results-with-textacular.html"/>
@@ -432,36 +457,6 @@ data: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"foo"&lt;/span&
 
 &lt;li id="fn2"&gt;
 &lt;p&gt;&lt;a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener"&gt;Rack spec&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref2"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-
-&lt;/ol&gt;
-&lt;/div&gt;
-</content>
-  </entry>
-  <entry>
-    <title>`CURRENT_TIMESTAMP`</title>
-    <link rel="alternate" href="https://dingus.clowder.name/2022/02/04/current-timestamp.html"/>
-    <id>https://dingus.clowder.name/2022/02/04/current-timestamp.html</id>
-    <published>2022-02-04T11:25:00+00:00</published>
-    <updated>2022-06-16T14:52:35+01:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <summary type="html">Better understand the semantics of `CURRENT_TIMESTAMP` within database transactions.</summary>
-    <content type="html">&lt;p&gt;Turns out calling &lt;code class="prettyprint"&gt;CURRENT_TIMESTAMP&lt;/code&gt; within a transaction will always return
-the time the transaction began&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt;. In my mental model I&amp;rsquo;d always thought of it
-being the clock time for the statement.&lt;/p&gt;
-
-&lt;p&gt;Postgres aliases &lt;code class="prettyprint"&gt;CURRENT_TIMESTAMP&lt;/code&gt; to &lt;code class="prettyprint"&gt;transaction_timestamp()&lt;/code&gt; which is a
-more intention revealing name. There&amp;rsquo;s also the well named &lt;code class="prettyprint"&gt;clock_timestamp()&lt;/code&gt;
-and &lt;code class="prettyprint"&gt;statement_timestamp()&lt;/code&gt;, both of which simply do what-it-says-on-the-tin.&lt;/p&gt;
-
-&lt;div class="footnotes"&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-
-&lt;li id="fn1"&gt;
-&lt;p&gt;&lt;a href="https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT" rel="nofollow noopener"&gt;https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;/ol&gt;
