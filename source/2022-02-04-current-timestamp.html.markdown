@@ -1,6 +1,7 @@
 ---
 title: "`CURRENT_TIMESTAMP`"
 date: 2022-02-04 11:25 UTC
+description: "Better understand the semantics of `CURRENT_TIMESTAMP` within database transactions."
 ---
 
 Turns out calling `CURRENT_TIMESTAMP` within a transaction will always return

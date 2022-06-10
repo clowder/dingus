@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Dingus</title>
+  <subtitle>A brief technical post every other week from Chris Lowder</subtitle>
   <id>https://dingus.clowder.name/</id>
   <link href="https://dingus.clowder.name/"/>
   <link href="https://dingus.clowder.name/feed.xml" rel="self"/>
   <updated>2022-05-30T18:30:00+01:00</updated>
   <author>
-    <name>Blog Author</name>
+    <name>Chris Lowder</name>
   </author>
   <entry>
     <title>Highlighting search results with Textacular</title>
     <link rel="alternate" href="https://dingus.clowder.name/2022/05/30/highlighting-search-results-with-textacular.html"/>
     <id>https://dingus.clowder.name/2022/05/30/highlighting-search-results-with-textacular.html</id>
     <published>2022-05-30T18:30:00+01:00</published>
-    <updated>2022-05-30T18:57:56+01:00</updated>
+    <updated>2022-06-16T14:58:02+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
+    <summary type="html">Add highlighting to your Textacular seach results using Postgres's ts_headline.</summary>
     <content type="html">&lt;p&gt;It&amp;rsquo;s possible to leverage Postgres&amp;rsquo;s &lt;code class="prettyprint"&gt;ts_headline&lt;/code&gt;&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt; to add highlighting of
 matched fragments in search results. With a caveat, the search fields need to
 be declared ahead of time.&lt;/p&gt;
@@ -61,10 +63,11 @@ be declared ahead of time.&lt;/p&gt;
     <link rel="alternate" href="https://dingus.clowder.name/2022/04/01/cheap-context-switching-with-git-worktree.html"/>
     <id>https://dingus.clowder.name/2022/04/01/cheap-context-switching-with-git-worktree.html</id>
     <published>2022-04-01T11:55:00+01:00</published>
-    <updated>2022-04-01T15:00:12+01:00</updated>
+    <updated>2022-06-16T14:58:02+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
+    <summary type="html">Quickly switch between in-progress tasks using git-worktree.</summary>
     <content type="html">&lt;p&gt;Git supports multiple checkouts from a single repository, allowing for multiple
 working directories linked to a single repository.&lt;/p&gt;
 
@@ -86,10 +89,11 @@ $ git worktree remove ../copy-changes
     <link rel="alternate" href="https://dingus.clowder.name/2022/03/18/active-record-find-each-using-cursors.html"/>
     <id>https://dingus.clowder.name/2022/03/18/active-record-find-each-using-cursors.html</id>
     <published>2022-03-18T13:26:00+00:00</published>
-    <updated>2022-03-18T14:41:44+00:00</updated>
+    <updated>2022-06-16T14:52:39+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
+    <summary type="html">Implement a cursor based version of Rails's `find_each` for Postgres</summary>
     <content type="html">&lt;p&gt;Active Record&amp;rsquo;s &lt;a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener"&gt;&lt;code class="prettyprint"&gt;find_each&lt;/code&gt;&lt;/a&gt; is the go-to method for loading a large number
 of records in an efficient way. Under the hood it uses &lt;code class="prettyprint"&gt;OFFSET&lt;/code&gt; and &lt;code class="prettyprint"&gt;LIMIT&lt;/code&gt; to
 load records in batches and &lt;code class="prettyprint"&gt;yield&lt;/code&gt; them to our block. One drawback to this
@@ -154,10 +158,11 @@ native support for Postgres cursors.&lt;/p&gt;
     <link rel="alternate" href="https://dingus.clowder.name/2022/03/04/recursive-sql.html"/>
     <id>https://dingus.clowder.name/2022/03/04/recursive-sql.html</id>
     <published>2022-03-04T12:25:00+00:00</published>
-    <updated>2022-03-04T16:16:50+00:00</updated>
+    <updated>2022-06-16T14:52:38+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
+    <summary type="html">Learn how to write recursive SQL queries in Postgres.</summary>
     <content type="html">&lt;p&gt;This week I encountered SQL&amp;rsquo;s recursive query syntax&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt; for the first time,
 using the &lt;code class="prettyprint"&gt;WITH RECURSIVE&lt;/code&gt; common table expression syntax.&lt;/p&gt;
 
@@ -253,10 +258,11 @@ time I&amp;rsquo;ve come to love munging data using SQL.&lt;/p&gt;
     <link rel="alternate" href="https://dingus.clowder.name/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html"/>
     <id>https://dingus.clowder.name/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html</id>
     <published>2022-02-18T12:38:00+00:00</published>
-    <updated>2022-02-20T19:02:19+00:00</updated>
+    <updated>2022-06-16T14:52:37+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
+    <summary type="html">Implement highly concurrent server-sent events in Rails with Rack hijack and concurrent-ruby.</summary>
     <content type="html">&lt;p&gt;Server-sent events&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt; (SSE) are a simple way to push data to clients over
 plain-old HTTP and rails has also provided a tidy DLS for SSE (via
 &lt;code class="prettyprint"&gt;[ActionController::Live]&lt;/code&gt;) since Rails 4.&lt;/p&gt;
@@ -437,10 +443,11 @@ data: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"foo"&lt;/span&
     <link rel="alternate" href="https://dingus.clowder.name/2022/02/04/current-timestamp.html"/>
     <id>https://dingus.clowder.name/2022/02/04/current-timestamp.html</id>
     <published>2022-02-04T11:25:00+00:00</published>
-    <updated>2022-05-27T17:05:09+01:00</updated>
+    <updated>2022-06-16T14:52:35+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
+    <summary type="html">Better understand the semantics of `CURRENT_TIMESTAMP` within database transactions.</summary>
     <content type="html">&lt;p&gt;Turns out calling &lt;code class="prettyprint"&gt;CURRENT_TIMESTAMP&lt;/code&gt; within a transaction will always return
 the time the transaction began&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt;. In my mental model I&amp;rsquo;d always thought of it
 being the clock time for the statement.&lt;/p&gt;

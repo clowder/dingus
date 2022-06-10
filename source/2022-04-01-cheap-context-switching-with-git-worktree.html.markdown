@@ -1,6 +1,7 @@
 ---
 title: Cheap context switching with git-worktree
 date: 2022-04-01 10:55 UTC
+description: "Quickly switch between in-progress tasks using git-worktree."
 ---
 
 Git supports multiple checkouts from a single repository, allowing for multiple

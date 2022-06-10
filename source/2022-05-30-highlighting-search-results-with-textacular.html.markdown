@@ -1,6 +1,7 @@
 ---
 title: "Highlighting search results with Textacular"
 date: 2022-05-30 17:30 UTC
+description: "Add highlighting to your Textacular seach results using Postgres's ts_headline."
 ---
 
 It's possible to leverage Postgres's `ts_headline`[^1] to add highlighting of

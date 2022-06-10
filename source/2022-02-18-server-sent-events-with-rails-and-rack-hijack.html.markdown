@@ -1,6 +1,7 @@
 ---
 title: Server-sent events with Rails and Rack hijack
 date: 2022-02-18 12:38 UTC
+description: "Implement highly concurrent server-sent events in Rails with Rack hijack and concurrent-ruby."
 ---
 
 Server-sent events[^1] (SSE) are a simple way to push data to clients over

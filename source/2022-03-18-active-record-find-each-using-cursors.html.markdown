@@ -1,6 +1,7 @@
 ---
 title: "Active Record `find_each` using Postges cursors"
 date: 2022-03-18 13:26 UTC
+description: "Implement a cursor based version of Rails's `find_each` for Postgres"
 ---
 
 Active Record's [`find_each`][1] is the go-to method for loading a large number

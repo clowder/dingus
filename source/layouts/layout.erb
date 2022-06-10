@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title><%= [current_article&.title, "Dingus"].compact.join(" | ") %></title>
+    <% if is_blog_article? && current_article.data.description.present? %>
+    <meta name="description" content="<%= current_article.data.description %>" />
+    <% else %>
+    <meta name="description" content="A brief technical post every other week from Chris Lowder"/>
+    <% end %>
 
     <%= feed_tag :atom, "#{blog.options.prefix.to_s}/feed.xml", title: "Atom Feed" %>
     <%= stylesheet_link_tag "site", "code" %>

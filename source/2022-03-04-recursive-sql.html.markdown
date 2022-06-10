@@ -1,6 +1,7 @@
 ---
 title: Recursive SQL
 date: 2022-03-04 12:25 UTC
+description: "Learn how to write recursive SQL queries in Postgres."
 ---
 
 This week I encountered SQL's recursive query syntax[^1] for the first time,
