@@ -87,6 +87,16 @@ helpers do
     @markdown ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(filter_html: true, no_images: true, no_links: true, no_styles: true))
     @markdown.render(text)
   end
+
+  def last_modified_at(article)
+    gittime = `git log -1 --pretty="format:%ci" #{article.source_file}`
+
+    if gittime.present?
+      Time.parse(gittime)
+    else
+      article.date.to_time
+    end
+  end
 end
 
 # Build-specific configuration

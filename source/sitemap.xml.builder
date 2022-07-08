@@ -4,7 +4,7 @@ xml.urlset 'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9' do
   blog.articles.each do |article|
     xml.url do
       xml.loc URI.join(site_url, article.url)
-      xml.lastmod File.mtime(article.source_file).iso8601
+      xml.lastmod last_modified_at(article).iso8601
       xml.changefreq 'weekly'
       xml.priority '0.5'
     end

@@ -14,7 +14,7 @@
     <link rel="alternate" href="https://dingus.clowder.name/2022/06/10/compiling-the-raspberry-pi-pico-sdk-on-apple-silicon.html"/>
     <id>https://dingus.clowder.name/2022/06/10/compiling-the-raspberry-pi-pico-sdk-on-apple-silicon.html</id>
     <published>2022-06-10T16:46:00+01:00</published>
-    <updated>2022-06-16T14:58:31+01:00</updated>
+    <updated>2022-06-16T14:58:42+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -39,7 +39,7 @@ tap, SDK, a &amp;ldquo;hello world&amp;rdquo; application and a README into a re
     <link rel="alternate" href="https://dingus.clowder.name/2022/05/30/highlighting-search-results-with-textacular.html"/>
     <id>https://dingus.clowder.name/2022/05/30/highlighting-search-results-with-textacular.html</id>
     <published>2022-05-30T18:30:00+01:00</published>
-    <updated>2022-06-16T14:58:02+01:00</updated>
+    <updated>2022-06-16T14:58:28+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -88,7 +88,7 @@ be declared ahead of time.&lt;/p&gt;
     <link rel="alternate" href="https://dingus.clowder.name/2022/04/01/cheap-context-switching-with-git-worktree.html"/>
     <id>https://dingus.clowder.name/2022/04/01/cheap-context-switching-with-git-worktree.html</id>
     <published>2022-04-01T11:55:00+01:00</published>
-    <updated>2022-06-16T14:58:02+01:00</updated>
+    <updated>2022-06-16T14:58:28+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -114,7 +114,7 @@ $ git worktree remove ../copy-changes
     <link rel="alternate" href="https://dingus.clowder.name/2022/03/18/active-record-find-each-using-cursors.html"/>
     <id>https://dingus.clowder.name/2022/03/18/active-record-find-each-using-cursors.html</id>
     <published>2022-03-18T13:26:00+00:00</published>
-    <updated>2022-06-16T14:52:39+01:00</updated>
+    <updated>2022-06-16T14:58:28+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -183,7 +183,7 @@ native support for Postgres cursors.&lt;/p&gt;
     <link rel="alternate" href="https://dingus.clowder.name/2022/03/04/recursive-sql.html"/>
     <id>https://dingus.clowder.name/2022/03/04/recursive-sql.html</id>
     <published>2022-03-04T12:25:00+00:00</published>
-    <updated>2022-06-16T14:52:38+01:00</updated>
+    <updated>2022-06-16T14:58:28+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
@@ -283,7 +283,7 @@ time I&amp;rsquo;ve come to love munging data using SQL.&lt;/p&gt;
     <link rel="alternate" href="https://dingus.clowder.name/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html"/>
     <id>https://dingus.clowder.name/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html</id>
     <published>2022-02-18T12:38:00+00:00</published>
-    <updated>2022-06-16T14:52:37+01:00</updated>
+    <updated>2022-06-16T14:58:28+01:00</updated>
     <author>
       <name>Article Author</name>
     </author>
