@@ -14,6 +14,24 @@
 
     <%= feed_tag :atom, "#{blog.options.prefix.to_s}/feed.xml", title: "Atom Feed" %>
     <%= stylesheet_link_tag "site", "code" %>
+
+    <% if is_blog_article? %>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "author": {
+          "@type": "Person",
+          "name": "Chris Lowder"
+        },
+        "headline": "<%= current_article.title %>",
+        "description": "<%= current_article.data.description %>",
+        "datePublished": "<%= current_article.date.to_time.iso8601 %>",
+        "dateModified": "<%= last_modified_at(current_article).iso8601 %>",
+        "inLanguage": "en-GB"
+      }
+    </script>
+    <% end %>
   </head>
   <body class="font-sans bg-fixed dark:bg-neutral-800 dark:text-gray-300">
     <div id="main" role="main" class="max-w-screen-sm p-4 mx-auto">
