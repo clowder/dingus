@@ -25,7 +25,7 @@
             <p class="text-sm">March 2022</p>
           </header>
           <main class="prose dark:prose-invert prose-pre:bg-inherit">
-            <p>Active Record&rsquo;s <a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener"><code class="prettyprint">find_each</code></a> is the go-to method for loading a large number
+            <p>Active Record&rsquo;s <a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener noreferrer"><code class="prettyprint">find_each</code></a> is the go-to method for loading a large number
 of records in an efficient way. Under the hood it uses <code class="prettyprint">OFFSET</code> and <code class="prettyprint">LIMIT</code> to
 load records in batches and <code class="prettyprint">yield</code> them to our block. One drawback to this
 approach is Rails requires records to be ordered by their primary key, despite
@@ -39,7 +39,7 @@ fetch it&rsquo;s results incrementally<sup id="fnref2"><a href="#fn2">2</a></sup
 native support for Postgres cursors.</p>
 
 <p>Spelunking Rails&rsquo;s issues on Github your author stumbled across
-<a href="https://github.com/rails/rails/issues/28085#issuecomment-457909168" rel="nofollow noopener">rails/rails#28085</a>, which contains a monkey patch impementing a variant of
+<a href="https://github.com/rails/rails/issues/28085#issuecomment-457909168" rel="nofollow noopener noreferrer">rails/rails#28085</a>, which contains a monkey patch impementing a variant of
 <code class="prettyprint">find_each</code> using cursors.</p>
 <div class="highlight"><pre class="highlight ruby"><code><span class="k">module</span> <span class="nn">ActiveRecord</span>
   <span class="k">module</span> <span class="nn">Batches</span>
@@ -73,11 +73,11 @@ native support for Postgres cursors.</p>
 <ol>
 
 <li id="fn1">
-<p><a href="https://www.postgresql.org/docs/current/queries-limit.html" rel="nofollow noopener">https://www.postgresql.org/docs/current/queries-limit.html</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+<p><a href="https://www.postgresql.org/docs/current/queries-limit.html" rel="nofollow noopener noreferrer">https://www.postgresql.org/docs/current/queries-limit.html</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 <li id="fn2">
-<p><a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener">https://www.postgresql.org/docs/current/sql-declare.html</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
+<p><a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener noreferrer">https://www.postgresql.org/docs/current/sql-declare.html</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
 </li>
 
 </ol>

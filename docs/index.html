@@ -37,7 +37,7 @@ requiring users to dig out the revision and host a &ldquo;tap&rdquo; to install 
 make it easier to get up-and-running quickly I&rsquo;ve pulled together the Homebrew
 tap, SDK, a &ldquo;hello world&rdquo; application and a README into a repo:</p>
 
-<p><a href="https://github.com/clowder/rpi-pico-macos-starter" rel="nofollow noopener">https://github.com/clowder/rpi-pico-macos-starter</a></p>
+<p><a href="https://github.com/clowder/rpi-pico-macos-starter" rel="nofollow noopener noreferrer">https://github.com/clowder/rpi-pico-macos-starter</a></p>
 
     </main>
   </article>
@@ -80,7 +80,7 @@ be declared ahead of time.</p>
 <ol>
 
 <li id="fn1">
-<p><a href="https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE" rel="nofollow noopener">https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+<p><a href="https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE" rel="nofollow noopener noreferrer">https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 </ol>
@@ -100,7 +100,7 @@ working directories linked to a single repository.</p>
 
 <p>For arguments sake let&rsquo;s say you&rsquo;re working in a feature branch and spot a
 typo. Damn! Instead of committing work-in-progress to switch branches
-<a href="https://git-scm.com/docs/git-worktree" rel="nofollow noopener">git-worktree</a> can checkout another branch to a temporary working directory.</p>
+<a href="https://git-scm.com/docs/git-worktree" rel="nofollow noopener noreferrer">git-worktree</a> can checkout another branch to a temporary working directory.</p>
 <div class="highlight"><pre class="highlight plaintext"><code>$ git worktree add ../copy-changes main
 $ cd ../copy-changes
 </code></pre></div>
@@ -119,7 +119,7 @@ $ git worktree remove ../copy-changes
       <p class="text-sm">March 2022</p>
     </header>
     <main class="prose dark:prose-invert">
-      <p>Active Record&rsquo;s <a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener"><code class="prettyprint">find_each</code></a> is the go-to method for loading a large number
+      <p>Active Record&rsquo;s <a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener noreferrer"><code class="prettyprint">find_each</code></a> is the go-to method for loading a large number
 of records in an efficient way. Under the hood it uses <code class="prettyprint">OFFSET</code> and <code class="prettyprint">LIMIT</code> to
 load records in batches and <code class="prettyprint">yield</code> them to our block. One drawback to this
 approach is Rails requires records to be ordered by their primary key, despite
@@ -133,7 +133,7 @@ fetch it&rsquo;s results incrementally<sup id="fnref2"><a href="#fn2">2</a></sup
 native support for Postgres cursors.</p>
 
 <p>Spelunking Rails&rsquo;s issues on Github your author stumbled across
-<a href="https://github.com/rails/rails/issues/28085#issuecomment-457909168" rel="nofollow noopener">rails/rails#28085</a>, which contains a monkey patch impementing a variant of
+<a href="https://github.com/rails/rails/issues/28085#issuecomment-457909168" rel="nofollow noopener noreferrer">rails/rails#28085</a>, which contains a monkey patch impementing a variant of
 <code class="prettyprint">find_each</code> using cursors.</p>
 <div class="highlight"><pre class="highlight ruby"><code><span class="k">module</span> <span class="nn">ActiveRecord</span>
   <span class="k">module</span> <span class="nn">Batches</span>
@@ -167,11 +167,11 @@ native support for Postgres cursors.</p>
 <ol>
 
 <li id="fn1">
-<p><a href="https://www.postgresql.org/docs/current/queries-limit.html" rel="nofollow noopener">https://www.postgresql.org/docs/current/queries-limit.html</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+<p><a href="https://www.postgresql.org/docs/current/queries-limit.html" rel="nofollow noopener noreferrer">https://www.postgresql.org/docs/current/queries-limit.html</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 <li id="fn2">
-<p><a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener">https://www.postgresql.org/docs/current/sql-declare.html</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
+<p><a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener noreferrer">https://www.postgresql.org/docs/current/sql-declare.html</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
 </li>
 
 </ol>
@@ -269,7 +269,7 @@ time I&rsquo;ve come to love munging data using SQL.</p>
 <ol>
 
 <li id="fn1">
-<p><a href="https://modern-sql.com/caniuse/T131" rel="nofollow noopener">https://modern-sql.com/caniuse/T131</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+<p><a href="https://modern-sql.com/caniuse/T131" rel="nofollow noopener noreferrer">https://modern-sql.com/caniuse/T131</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 </ol>
@@ -295,7 +295,7 @@ those server threads back to work serving incoming requests.</p>
 
 <p>The secret sauce is Rack &ldquo;hijack&rdquo;<sup id="fnref2"><a href="#fn2">2</a></sup> which let&rsquo;s us take control of the actual
 <code class="prettyprint">[TCPSocket]</code> backing the incoming request. When combined with the myriad
-concurrency primitives in modern Rails apps (via <a href="https://github.com/ruby-concurrency/concurrent-ruby" rel="nofollow noopener">concurrent-ruby</a>) it&rsquo;s
+concurrency primitives in modern Rails apps (via <a href="https://github.com/ruby-concurrency/concurrent-ruby" rel="nofollow noopener noreferrer">concurrent-ruby</a>) it&rsquo;s
 possible to handle as many open connections as system RAM and <code class="prettyprint">ulimit</code> will
 allow.</p>
 <div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">API</span>
@@ -448,11 +448,11 @@ data: <span class="o">{</span><span class="s2">"foo"</span>:<span class="s2">"ba
 <ol>
 
 <li id="fn1">
-<p><a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events" rel="nofollow noopener">Server-sent events living standard</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+<p><a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events" rel="nofollow noopener noreferrer">Server-sent events living standard</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 <li id="fn2">
-<p><a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener">Rack spec</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
+<p><a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener noreferrer">Rack spec</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
 </li>
 
 </ol>
@@ -480,7 +480,7 @@ and <code class="prettyprint">statement_timestamp()</code>, both of which simply
 <ol>
 
 <li id="fn1">
-<p><a href="https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT" rel="nofollow noopener">https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+<p><a href="https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT" rel="nofollow noopener noreferrer">https://postgresql.org/docs/14/interactive/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 </ol>

@@ -31,7 +31,7 @@ requiring users to dig out the revision and host a &amp;ldquo;tap&amp;rdquo; to 
 make it easier to get up-and-running quickly I&amp;rsquo;ve pulled together the Homebrew
 tap, SDK, a &amp;ldquo;hello world&amp;rdquo; application and a README into a repo:&lt;/p&gt;
 
-&lt;p&gt;&lt;a href="https://github.com/clowder/rpi-pico-macos-starter" rel="nofollow noopener"&gt;https://github.com/clowder/rpi-pico-macos-starter&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://github.com/clowder/rpi-pico-macos-starter" rel="nofollow noopener noreferrer"&gt;https://github.com/clowder/rpi-pico-macos-starter&lt;/a&gt;&lt;/p&gt;
 </content>
   </entry>
   <entry>
@@ -76,7 +76,7 @@ be declared ahead of time.&lt;/p&gt;
 &lt;ol&gt;
 
 &lt;li id="fn1"&gt;
-&lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE" rel="nofollow noopener"&gt;https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE" rel="nofollow noopener noreferrer"&gt;https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-HEADLINE&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;/ol&gt;
@@ -98,7 +98,7 @@ working directories linked to a single repository.&lt;/p&gt;
 
 &lt;p&gt;For arguments sake let&amp;rsquo;s say you&amp;rsquo;re working in a feature branch and spot a
 typo. Damn! Instead of committing work-in-progress to switch branches
-&lt;a href="https://git-scm.com/docs/git-worktree" rel="nofollow noopener"&gt;git-worktree&lt;/a&gt; can checkout another branch to a temporary working directory.&lt;/p&gt;
+&lt;a href="https://git-scm.com/docs/git-worktree" rel="nofollow noopener noreferrer"&gt;git-worktree&lt;/a&gt; can checkout another branch to a temporary working directory.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ git worktree add ../copy-changes main
 $ cd ../copy-changes
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
@@ -119,7 +119,7 @@ $ git worktree remove ../copy-changes
       <name>Article Author</name>
     </author>
     <summary type="html">Implement a cursor based version of Rails's `find_each` for Postgres</summary>
-    <content type="html">&lt;p&gt;Active Record&amp;rsquo;s &lt;a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener"&gt;&lt;code class="prettyprint"&gt;find_each&lt;/code&gt;&lt;/a&gt; is the go-to method for loading a large number
+    <content type="html">&lt;p&gt;Active Record&amp;rsquo;s &lt;a href="https://api.rubyonrails.org/classes/ActiveRecord/Batches.html#method-i-find_each" rel="nofollow noopener noreferrer"&gt;&lt;code class="prettyprint"&gt;find_each&lt;/code&gt;&lt;/a&gt; is the go-to method for loading a large number
 of records in an efficient way. Under the hood it uses &lt;code class="prettyprint"&gt;OFFSET&lt;/code&gt; and &lt;code class="prettyprint"&gt;LIMIT&lt;/code&gt; to
 load records in batches and &lt;code class="prettyprint"&gt;yield&lt;/code&gt; them to our block. One drawback to this
 approach is Rails requires records to be ordered by their primary key, despite
@@ -133,7 +133,7 @@ fetch it&amp;rsquo;s results incrementally&lt;sup id="fnref2"&gt;&lt;a href="#fn
 native support for Postgres cursors.&lt;/p&gt;
 
 &lt;p&gt;Spelunking Rails&amp;rsquo;s issues on Github your author stumbled across
-&lt;a href="https://github.com/rails/rails/issues/28085#issuecomment-457909168" rel="nofollow noopener"&gt;rails/rails#28085&lt;/a&gt;, which contains a monkey patch impementing a variant of
+&lt;a href="https://github.com/rails/rails/issues/28085#issuecomment-457909168" rel="nofollow noopener noreferrer"&gt;rails/rails#28085&lt;/a&gt;, which contains a monkey patch impementing a variant of
 &lt;code class="prettyprint"&gt;find_each&lt;/code&gt; using cursors.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="k"&gt;module&lt;/span&gt; &lt;span class="nn"&gt;ActiveRecord&lt;/span&gt;
   &lt;span class="k"&gt;module&lt;/span&gt; &lt;span class="nn"&gt;Batches&lt;/span&gt;
@@ -167,11 +167,11 @@ native support for Postgres cursors.&lt;/p&gt;
 &lt;ol&gt;
 
 &lt;li id="fn1"&gt;
-&lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/queries-limit.html" rel="nofollow noopener"&gt;https://www.postgresql.org/docs/current/queries-limit.html&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/queries-limit.html" rel="nofollow noopener noreferrer"&gt;https://www.postgresql.org/docs/current/queries-limit.html&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;li id="fn2"&gt;
-&lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener"&gt;https://www.postgresql.org/docs/current/sql-declare.html&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref2"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener noreferrer"&gt;https://www.postgresql.org/docs/current/sql-declare.html&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref2"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;/ol&gt;
@@ -271,7 +271,7 @@ time I&amp;rsquo;ve come to love munging data using SQL.&lt;/p&gt;
 &lt;ol&gt;
 
 &lt;li id="fn1"&gt;
-&lt;p&gt;&lt;a href="https://modern-sql.com/caniuse/T131" rel="nofollow noopener"&gt;https://modern-sql.com/caniuse/T131&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://modern-sql.com/caniuse/T131" rel="nofollow noopener noreferrer"&gt;https://modern-sql.com/caniuse/T131&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;/ol&gt;
@@ -299,7 +299,7 @@ those server threads back to work serving incoming requests.&lt;/p&gt;
 
 &lt;p&gt;The secret sauce is Rack &amp;ldquo;hijack&amp;rdquo;&lt;sup id="fnref2"&gt;&lt;a href="#fn2"&gt;2&lt;/a&gt;&lt;/sup&gt; which let&amp;rsquo;s us take control of the actual
 &lt;code class="prettyprint"&gt;[TCPSocket]&lt;/code&gt; backing the incoming request. When combined with the myriad
-concurrency primitives in modern Rails apps (via &lt;a href="https://github.com/ruby-concurrency/concurrent-ruby" rel="nofollow noopener"&gt;concurrent-ruby&lt;/a&gt;) it&amp;rsquo;s
+concurrency primitives in modern Rails apps (via &lt;a href="https://github.com/ruby-concurrency/concurrent-ruby" rel="nofollow noopener noreferrer"&gt;concurrent-ruby&lt;/a&gt;) it&amp;rsquo;s
 possible to handle as many open connections as system RAM and &lt;code class="prettyprint"&gt;ulimit&lt;/code&gt; will
 allow.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ApplicationController&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="no"&gt;ActionController&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;API&lt;/span&gt;
@@ -452,11 +452,11 @@ data: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"foo"&lt;/span&
 &lt;ol&gt;
 
 &lt;li id="fn1"&gt;
-&lt;p&gt;&lt;a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events" rel="nofollow noopener"&gt;Server-sent events living standard&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events" rel="nofollow noopener noreferrer"&gt;Server-sent events living standard&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;li id="fn2"&gt;
-&lt;p&gt;&lt;a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener"&gt;Rack spec&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref2"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener noreferrer"&gt;Rack spec&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref2"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;/ol&gt;

@@ -36,7 +36,7 @@ those server threads back to work serving incoming requests.</p>
 
 <p>The secret sauce is Rack &ldquo;hijack&rdquo;<sup id="fnref2"><a href="#fn2">2</a></sup> which let&rsquo;s us take control of the actual
 <code class="prettyprint">[TCPSocket]</code> backing the incoming request. When combined with the myriad
-concurrency primitives in modern Rails apps (via <a href="https://github.com/ruby-concurrency/concurrent-ruby" rel="nofollow noopener">concurrent-ruby</a>) it&rsquo;s
+concurrency primitives in modern Rails apps (via <a href="https://github.com/ruby-concurrency/concurrent-ruby" rel="nofollow noopener noreferrer">concurrent-ruby</a>) it&rsquo;s
 possible to handle as many open connections as system RAM and <code class="prettyprint">ulimit</code> will
 allow.</p>
 <div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">API</span>
@@ -189,11 +189,11 @@ data: <span class="o">{</span><span class="s2">"foo"</span>:<span class="s2">"ba
 <ol>
 
 <li id="fn1">
-<p><a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events" rel="nofollow noopener">Server-sent events living standard</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+<p><a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events" rel="nofollow noopener noreferrer">Server-sent events living standard</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 <li id="fn2">
-<p><a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener">Rack spec</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
+<p><a href="https://github.com/rack/rack/blob/42aff22f708123839ba706cbe659d108b47c40c7/SPEC.rdoc" rel="nofollow noopener noreferrer">Rack spec</a>&nbsp;<a href="#fnref2">&#8617;</a></p>
 </li>
 
 </ol>

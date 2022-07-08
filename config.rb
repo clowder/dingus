@@ -5,7 +5,7 @@ set :markdown, {
   autolink: true,
   fenced_code_blocks: true,
   footnotes: true,
-  link_attributes: {rel: "nofollow noopener"},
+  link_attributes: {rel: "nofollow noopener noreferrer"},
   prettify: true,
   smartypants: true,
   tables: true,
