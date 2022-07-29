@@ -83,8 +83,16 @@ page "/sitemap.xml", layout: false
 # https://middlemanapp.com/basics/helper-methods/
 
 helpers do
+  TITLE_RENDERER = Class.new(Redcarpet::Render::HTML) do
+    include ::Redcarpet::Render::SmartyPants
+
+    def paragraph(text)
+      text
+    end
+  end
+
   def title(text)
-    @markdown ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(filter_html: true, no_images: true, no_links: true, no_styles: true))
+    @markdown ||= Redcarpet::Markdown.new(TITLE_RENDERER.new(filter_html: true, no_images: true, no_links: true, no_styles: true))
     @markdown.render(text)
   end
 

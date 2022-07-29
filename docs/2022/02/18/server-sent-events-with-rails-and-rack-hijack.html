@@ -9,7 +9,7 @@
     <meta name="description" content="Implement highly concurrent server-sent events in Rails with Rack hijack and concurrent-ruby." />
 
     <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
-    <link href="/stylesheets/site-33067f42.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
+    <link href="/stylesheets/site-807805fa.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
 
     <script type="application/ld+json">
       {
@@ -28,20 +28,19 @@
     </script>
   </head>
   <body class="font-sans bg-fixed dark:bg-neutral-800 dark:text-gray-300">
-    <div id="main" role="main" class="max-w-screen-sm p-4 mx-auto">
+    <div id="main" role="main" class="max-w-prose p-4 mx-auto">
       <header class="mb-12 mt-8 font-serif">
         <h1 class="font-black text-xl md:text-3xl leading-tight hover:underline"><a href="/">dingus</a></h1>
         <p class="italic">/ˈdɪŋəs/ Something whose name is unknown or forgotten</p>
       </header>
 
-        <article>
-          <header class="mb-4">
-            <h1 class="text-2xl md:text-4xl font-bold leading-tight"><p>Server-sent events with Rails and Rack hijack</p>
-</h1>
-            <p class="text-sm">February 2022</p>
-          </header>
-          <main class="prose dark:prose-invert prose-pre:bg-inherit">
-            <p>Server-sent events<sup id="fnref1"><a href="#fn1">1</a></sup> (SSE) are a simple way to push data to clients over
+        <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <header class="mb-5">
+      <h1>Server-sent events with Rails and Rack hijack</h1>
+    <p class="text-sm m-0">February 2022</p>
+  </header>
+  <main>
+    <p>Server-sent events<sup id="fnref1"><a href="#fn1">1</a></sup> (SSE) are a simple way to push data to clients over
 plain-old HTTP and rails has also provided a tidy DLS for SSE (via
 <code class="prettyprint">[ActionController::Live]</code>) since Rails 4.</p>
 
@@ -215,8 +214,9 @@ data: <span class="o">{</span><span class="s2">"foo"</span>:<span class="s2">"ba
 </ol>
 </div>
 
-          </main>
-        </article>
+  </main>
+</article>
+
     </div>
   </body>
 </html>

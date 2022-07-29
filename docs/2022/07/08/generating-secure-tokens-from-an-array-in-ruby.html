@@ -9,7 +9,7 @@
     <meta name="description" content="Learn how to generate secure tokens from an array of characters or a wordlist in Ruby" />
 
     <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
-    <link href="/stylesheets/site-33067f42.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
+    <link href="/stylesheets/site-807805fa.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
 
     <script type="application/ld+json">
       {
@@ -28,20 +28,19 @@
     </script>
   </head>
   <body class="font-sans bg-fixed dark:bg-neutral-800 dark:text-gray-300">
-    <div id="main" role="main" class="max-w-screen-sm p-4 mx-auto">
+    <div id="main" role="main" class="max-w-prose p-4 mx-auto">
       <header class="mb-12 mt-8 font-serif">
         <h1 class="font-black text-xl md:text-3xl leading-tight hover:underline"><a href="/">dingus</a></h1>
         <p class="italic">/ˈdɪŋəs/ Something whose name is unknown or forgotten</p>
       </header>
 
-        <article>
-          <header class="mb-4">
-            <h1 class="text-2xl md:text-4xl font-bold leading-tight"><p>Generating secure tokens from an array in Ruby</p>
-</h1>
-            <p class="text-sm">July 2022</p>
-          </header>
-          <main class="prose dark:prose-invert prose-pre:bg-inherit">
-            <p>Ruby&rsquo;s <code class="prettyprint">SecureRandom</code> provides a random number generator suitable for
+        <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <header class="mb-5">
+      <h1>Generating secure tokens from an array in Ruby</h1>
+    <p class="text-sm m-0">July 2022</p>
+  </header>
+  <main>
+    <p>Ruby&rsquo;s <code class="prettyprint">SecureRandom</code> provides a random number generator suitable for
 generating secure tokens. But it doesn&rsquo;t allow the user to specify a source
 array, for example an array of characters or a <a href="https://github.com/bitcoin/bips/blob/df443f8db30862b4776b4c06c47b62ded0790dc5/bip-0039/bip-0039-wordlists.md" rel="nofollow noopener noreferrer">wordlist</a>.</p>
 
@@ -61,8 +60,9 @@ any array.</p>
 </code></pre></div>
 <p><code class="prettyprint">[Array#shuffle]</code> and <code class="prettyprint">[Array#shuffle!]</code> also accept the <code class="prettyprint">random</code> argument.</p>
 
-          </main>
-        </article>
+  </main>
+</article>
+
     </div>
   </body>
 </html>

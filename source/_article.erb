@@ -1,0 +1,13 @@
+<article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <header class="mb-5">
+    <% if defined?(link_header) && link_header %>
+      <h1 class="not-prose"><%= link_to title(article.title), article %></h1>
+    <% else %>
+      <h1><%= title(article.title) %></h1>
+    <% end %>
+    <p class="text-sm m-0"><%= article.date.strftime("%B %Y") %></p>
+  </header>
+  <main>
+    <%= article.body %>
+  </main>
+</article>
