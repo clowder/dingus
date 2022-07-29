@@ -89,7 +89,7 @@ helpers do
   end
 
   def last_modified_at(article)
-    gittime = `git log -1 --pretty="format:%ci" #{article.source_file}`
+    gittime = `git log -1 --diff-filter=M --pretty="format:%ci" #{article.source_file}`
 
     if gittime.present?
       Time.parse(gittime)
