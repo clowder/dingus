@@ -9,7 +9,7 @@
     <meta name="description" content="A brief technical post every other week from Chris Lowder"/>
 
     <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
-    <link href="/stylesheets/site-807805fa.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
+    <link href="/stylesheets/site-58846dd7.css" rel="stylesheet" /><link href="/stylesheets/code-aa297c99.css" rel="stylesheet" />
 
   </head>
   <body class="font-sans bg-fixed dark:bg-neutral-800 dark:text-gray-300">
@@ -19,7 +19,145 @@
         <p class="italic">/ˈdɪŋəs/ Something whose name is unknown or forgotten</p>
       </header>
 
-          <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+          <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
+  <header class="mb-5">
+      <h1 class="not-prose"><a href="/2022/07/29/rack-cheatsheet.html">Rack Cheatsheet</a></h1>
+    <p class="text-sm m-0">July 2022</p>
+  </header>
+  <main>
+    <h2>Rack interface</h2>
+
+<h3>Middleware</h3>
+
+<p>Middleware is the atom of Rack Land. It&rsquo; has a very simple interface! It&rsquo;s
+<code class="prettyprint">#initialize</code> <em>must</em> accept a single argument, this is the <em>next</em> middleware in
+the stack. The current middleware <em>should</em> send <code class="prettyprint">#call</code> to this middleware in
+it&rsquo;s own <code class="prettyprint">#call</code> method.</p>
+
+<p>Middleware <em>must</em> also respond to <code class="prettyprint">#call</code>, which <em>must</em> accept a single
+argument and <em>must</em> return the &ldquo;magic triple&rdquo;. The argument passed is the Rack
+&ldquo;environment hash&rdquo;, it contains information about the HTTP request and
+Rack-specific variables<sup id="fnref1"><a href="#fn1">1</a></sup>. The magic triple is broken down below.</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="p">[</span>
+  <span class="mi">200</span><span class="p">,</span>                              <span class="c1"># HTTP Status Code, must be an `Integer`</span>
+  <span class="p">{</span><span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"text/plain"</span><span class="p">},</span> <span class="c1"># Headers, must be a `Hash`, but can be empty</span>
+  <span class="p">[</span><span class="s2">"Hello world."</span><span class="p">]</span>                  <span class="c1"># Body, must respond to `#each`</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3>Applications</h3>
+
+<p>Applications are just a special case middleware. Because they&rsquo;re at the bottom
+of the stack they <em>do not</em> need to implement <code class="prettyprint">#initalize</code>, they <em>must</em> respond
+to <code class="prettyprint">#call</code>.</p>
+
+<h2>Rack-up DSL</h2>
+
+<p>The entry point to Rack! Normally added to a <code class="prettyprint">config.ru</code> file and booted
+with a sever with a Rack handler build in (like <a href="https://puma.io" rel="nofollow noopener noreferrer">Puma</a>).</p>
+
+<h3>Running an application</h3>
+
+<p><em>Using a proc:</em></p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">run</span> <span class="nb">proc</span> <span class="p">{</span>
+  <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"text/plain"</span><span class="p">},</span> <span class="p">[</span><span class="s2">"Hello world."</span><span class="p">]]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><em>Using a class:</em></p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">HelloWorld</span>
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">_env</span><span class="p">)</span>
+    <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"text/plain"</span><span class="p">},</span> <span class="p">[</span><span class="s2">"Hello world."</span><span class="p">]]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">run</span> <span class="no">HelloWorld</span><span class="p">.</span><span class="nf">new</span>
+</code></pre></div>
+<h3>Adding middleware</h3>
+
+<p><em>Without configuration</em></p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ShowExceptions</span>
+</code></pre></div>
+<p><em>With configuration</em></p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Auth</span><span class="o">::</span><span class="no">Basic</span><span class="p">,</span> <span class="s2">"Rack Cheatsheet"</span> <span class="k">do</span> <span class="o">|</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">|</span>
+  <span class="no">OpenSSL</span><span class="p">.</span><span class="nf">secure_compare</span><span class="p">(</span><span class="s1">'secret'</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<h3>Two applications, one <code class="prettyprint">config.ru</code></h3>
+<div class="highlight"><pre class="highlight ruby"><code><span class="no">APP_1</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span>
+  <span class="p">[</span><span class="mi">301</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Location"</span> <span class="o">=&gt;</span> <span class="s2">"/hello-world"</span><span class="p">},</span> <span class="p">[]]</span>
+<span class="p">}</span>
+
+<span class="no">APP_2</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span>
+  <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"text/plain"</span><span class="p">},</span> <span class="p">[</span><span class="s2">"Hello world."</span><span class="p">]]</span>
+<span class="p">}</span>
+
+<span class="n">map</span> <span class="s2">"/hello-world"</span> <span class="k">do</span>
+  <span class="n">run</span> <span class="no">APP_2</span>
+<span class="k">end</span>
+
+<span class="n">run</span> <span class="no">APP_1</span>
+</code></pre></div>
+<h3>Warming up applications on boot</h3>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">warmup</span> <span class="k">do</span> <span class="o">|</span><span class="n">app</span><span class="o">|</span>
+  <span class="n">client</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">MockRequest</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+  <span class="n">client</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="s1">'/warm-cache'</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<h2>Request handing</h2>
+
+<p>Using the environment hash directly can be a little unwieldy, <code class="prettyprint">Rack::Request</code>
+is a helpful wrapper to make it more ergonomic.</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">run</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="n">request</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Request</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+  <span class="k">unless</span> <span class="n">request</span><span class="p">.</span><span class="nf">scheme</span> <span class="o">==</span> <span class="s1">'https'</span>
+    <span class="k">return</span> <span class="p">[</span><span class="mi">301</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Location"</span> <span class="o">=&gt;</span> <span class="s2">"https://</span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">host</span><span class="si">}#{</span><span class="n">request</span><span class="p">.</span><span class="nf">fullpath</span><span class="si">}</span><span class="s2">"</span><span class="p">},</span> <span class="p">[]]</span>
+  <span class="k">end</span>
+
+  <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="nf">get?</span>
+    <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"text/plain"</span><span class="p">},</span> <span class="p">[</span><span class="s2">"Secure hello world."</span><span class="p">]]</span>
+  <span class="k">else</span>
+    <span class="p">[</span><span class="mi">405</span><span class="p">,</span> <span class="p">{},</span> <span class="p">[]]</span>
+  <span class="k">end</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>The response object</h2>
+
+<p>A convenience class for generating responses, calling <code class="prettyprint">#to_a</code> or <code class="prettyprint">#finish</code> will
+return a magic triple.</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">run</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">_env</span><span class="o">|</span>
+  <span class="n">response</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Response</span><span class="p">.</span><span class="nf">new</span>
+
+  <span class="n">response</span><span class="p">.</span><span class="nf">write</span> <span class="s2">"&lt;p&gt;"</span>
+
+  <span class="k">case</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">hour</span>
+  <span class="k">when</span> <span class="mi">0</span><span class="o">..</span><span class="mi">11</span>
+    <span class="n">response</span><span class="p">.</span><span class="nf">write</span> <span class="s2">"Good morning!"</span>
+  <span class="k">when</span> <span class="mi">12</span><span class="o">..</span><span class="mi">17</span>
+    <span class="n">response</span><span class="p">.</span><span class="nf">write</span> <span class="s2">"Good afternoon!"</span>
+  <span class="k">when</span> <span class="mi">18</span><span class="o">..</span><span class="mi">23</span>
+    <span class="n">response</span><span class="p">.</span><span class="nf">write</span> <span class="s2">"Good evening!"</span>
+  <span class="k">end</span>
+
+  <span class="n">response</span><span class="p">.</span><span class="nf">write</span> <span class="s2">" &lt;time&gt;It's </span><span class="si">#{</span><span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%l:%M %P"</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/time&gt;.&lt;/p&gt;"</span>
+
+  <span class="n">response</span><span class="p">.</span><span class="nf">finish</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="footnotes">
+<hr>
+<ol>
+
+<li id="fn1">
+<p><a href="https://github.com/rack/rack/blob/0ba88559cd15ffc2b7a0fed7a05d62622349ea6f/SPEC.rdoc#label-The+Environment" rel="nofollow noopener noreferrer">https://github.com/rack/rack/blob/0ba88559cd15ffc2b7a0fed7a05d62622349ea6f/SPEC.rdoc#label-The+Environment</a>&nbsp;<a href="#fnref1">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+  </main>
+</article>
+
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/07/08/generating-secure-tokens-from-an-array-in-ruby.html">Generating secure tokens from an array in Ruby</a></h1>
     <p class="text-sm m-0">July 2022</p>
@@ -48,7 +186,7 @@ any array.</p>
   </main>
 </article>
 
-  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/06/10/compiling-the-raspberry-pi-pico-sdk-on-apple-silicon.html">Compiling the Raspberry Pi Pico SDK on Apple Silicon</a></h1>
     <p class="text-sm m-0">June 2022</p>
@@ -71,7 +209,7 @@ tap, SDK, a &ldquo;hello world&rdquo; application and a README into a repo:</p>
   </main>
 </article>
 
-  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/05/30/highlighting-search-results-with-textacular.html">Highlighting search results with Textacular</a></h1>
     <p class="text-sm m-0">May 2022</p>
@@ -118,7 +256,7 @@ be declared ahead of time.</p>
   </main>
 </article>
 
-  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/04/01/cheap-context-switching-with-git-worktree.html">Cheap context switching with git-worktree</a></h1>
     <p class="text-sm m-0">April 2022</p>
@@ -142,7 +280,7 @@ $ git worktree remove ../copy-changes
   </main>
 </article>
 
-  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/03/18/active-record-find-each-using-cursors.html">Active Record <code>find_each</code> using Postges cursors</a></h1>
     <p class="text-sm m-0">March 2022</p>
@@ -209,7 +347,7 @@ native support for Postgres cursors.</p>
   </main>
 </article>
 
-  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/03/04/recursive-sql.html">Recursive SQL</a></h1>
     <p class="text-sm m-0">March 2022</p>
@@ -307,7 +445,7 @@ time I&rsquo;ve come to love munging data using SQL.</p>
   </main>
 </article>
 
-  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/02/18/server-sent-events-with-rails-and-rack-hijack.html">Server-sent events with Rails and Rack hijack</a></h1>
     <p class="text-sm m-0">February 2022</p>
@@ -490,7 +628,7 @@ data: <span class="o">{</span><span class="s2">"foo"</span>:<span class="s2">"ba
   </main>
 </article>
 
-  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 prose-pre:bg-inherit">
+  <article class="mb-24 first:mt-0 prose dark:prose-invert prose-h1:mb-2 first:prose-h2:mt-0 prose-pre:bg-inherit">
   <header class="mb-5">
       <h1 class="not-prose"><a href="/2022/02/04/current-timestamp.html"><code>CURRENT_TIMESTAMP</code></a></h1>
     <p class="text-sm m-0">February 2022</p>

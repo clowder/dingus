@@ -5,10 +5,150 @@
   <id>https://dingus.clowder.name/</id>
   <link href="https://dingus.clowder.name/"/>
   <link href="https://dingus.clowder.name/feed.xml" rel="self"/>
-  <updated>2022-07-08T09:46:00+01:00</updated>
+  <updated>2022-07-29T13:00:00+01:00</updated>
   <author>
     <name>Chris Lowder</name>
   </author>
+  <entry>
+    <title>Rack Cheatsheet</title>
+    <link rel="alternate" href="https://dingus.clowder.name/2022/07/29/rack-cheatsheet.html"/>
+    <id>https://dingus.clowder.name/2022/07/29/rack-cheatsheet.html</id>
+    <published>2022-07-29T13:00:00+01:00</published>
+    <updated>2022-07-29T13:00:00+01:00</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <summary type="html">A one-page guide to getting start with Rack.</summary>
+    <content type="html">&lt;h2&gt;Rack interface&lt;/h2&gt;
+
+&lt;h3&gt;Middleware&lt;/h3&gt;
+
+&lt;p&gt;Middleware is the atom of Rack Land. It&amp;rsquo; has a very simple interface! It&amp;rsquo;s
+&lt;code class="prettyprint"&gt;#initialize&lt;/code&gt; &lt;em&gt;must&lt;/em&gt; accept a single argument, this is the &lt;em&gt;next&lt;/em&gt; middleware in
+the stack. The current middleware &lt;em&gt;should&lt;/em&gt; send &lt;code class="prettyprint"&gt;#call&lt;/code&gt; to this middleware in
+it&amp;rsquo;s own &lt;code class="prettyprint"&gt;#call&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;Middleware &lt;em&gt;must&lt;/em&gt; also respond to &lt;code class="prettyprint"&gt;#call&lt;/code&gt;, which &lt;em&gt;must&lt;/em&gt; accept a single
+argument and &lt;em&gt;must&lt;/em&gt; return the &amp;ldquo;magic triple&amp;rdquo;. The argument passed is the Rack
+&amp;ldquo;environment hash&amp;rdquo;, it contains information about the HTTP request and
+Rack-specific variables&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt;. The magic triple is broken down below.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="p"&gt;[&lt;/span&gt;
+  &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;                              &lt;span class="c1"&gt;# HTTP Status Code, must be an `Integer`&lt;/span&gt;
+  &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"Content-Type"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"text/plain"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="c1"&gt;# Headers, must be a `Hash`, but can be empty&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"Hello world."&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;                  &lt;span class="c1"&gt;# Body, must respond to `#each`&lt;/span&gt;
+&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Applications&lt;/h3&gt;
+
+&lt;p&gt;Applications are just a special case middleware. Because they&amp;rsquo;re at the bottom
+of the stack they &lt;em&gt;do not&lt;/em&gt; need to implement &lt;code class="prettyprint"&gt;#initalize&lt;/code&gt;, they &lt;em&gt;must&lt;/em&gt; respond
+to &lt;code class="prettyprint"&gt;#call&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Rack-up DSL&lt;/h2&gt;
+
+&lt;p&gt;The entry point to Rack! Normally added to a &lt;code class="prettyprint"&gt;config.ru&lt;/code&gt; file and booted
+with a sever with a Rack handler build in (like &lt;a href="https://puma.io" rel="nofollow noopener noreferrer"&gt;Puma&lt;/a&gt;).&lt;/p&gt;
+
+&lt;h3&gt;Running an application&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Using a proc:&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="nb"&gt;proc&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"Content-Type"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"text/plain"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"Hello world."&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Using a class:&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;HelloWorld&lt;/span&gt;
+  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_env&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"Content-Type"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"text/plain"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"Hello world."&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="no"&gt;HelloWorld&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Adding middleware&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Without configuration&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="no"&gt;Rack&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;ShowExceptions&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;With configuration&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="no"&gt;Rack&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Basic&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"Rack Cheatsheet"&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+  &lt;span class="no"&gt;OpenSSL&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;secure_compare&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'secret'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Two applications, one &lt;code class="prettyprint"&gt;config.ru&lt;/code&gt;&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="no"&gt;APP_1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;proc&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;301&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"Location"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"/hello-world"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[]]&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="no"&gt;APP_2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;proc&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"Content-Type"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"text/plain"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"Hello world."&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;map&lt;/span&gt; &lt;span class="s2"&gt;"/hello-world"&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="no"&gt;APP_2&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="no"&gt;APP_1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Warming up applications on boot&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="n"&gt;warmup&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+  &lt;span class="n"&gt;client&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Rack&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;MockRequest&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'/warm-cache'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2&gt;Request handing&lt;/h2&gt;
+
+&lt;p&gt;Using the environment hash directly can be a little unwieldy, &lt;code class="prettyprint"&gt;Rack::Request&lt;/code&gt;
+is a helpful wrapper to make it more ergonomic.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="nb"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+  &lt;span class="n"&gt;request&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Rack&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="k"&gt;unless&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;scheme&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'https'&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;301&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"Location"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"https://&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;host&lt;/span&gt;&lt;span class="si"&gt;}#{&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;fullpath&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[]]&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;get?&lt;/span&gt;
+    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;"Content-Type"&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"text/plain"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;"Secure hello world."&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;405&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="p"&gt;[]]&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2&gt;The response object&lt;/h2&gt;
+
+&lt;p&gt;A convenience class for generating responses, calling &lt;code class="prettyprint"&gt;#to_a&lt;/code&gt; or &lt;code class="prettyprint"&gt;#finish&lt;/code&gt; will
+return a magic triple.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="nb"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;_env&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+  &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Rack&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;new&lt;/span&gt;
+
+  &lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt; &lt;span class="s2"&gt;"&amp;lt;p&amp;gt;"&lt;/span&gt;
+
+  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="no"&gt;Time&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;now&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;hour&lt;/span&gt;
+  &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;..&lt;/span&gt;&lt;span class="mi"&gt;11&lt;/span&gt;
+    &lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt; &lt;span class="s2"&gt;"Good morning!"&lt;/span&gt;
+  &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="mi"&gt;12&lt;/span&gt;&lt;span class="o"&gt;..&lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt;
+    &lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt; &lt;span class="s2"&gt;"Good afternoon!"&lt;/span&gt;
+  &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="mi"&gt;18&lt;/span&gt;&lt;span class="o"&gt;..&lt;/span&gt;&lt;span class="mi"&gt;23&lt;/span&gt;
+    &lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt; &lt;span class="s2"&gt;"Good evening!"&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;write&lt;/span&gt; &lt;span class="s2"&gt;" &amp;lt;time&amp;gt;It's &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="no"&gt;Time&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;now&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;strftime&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"%l:%M %P"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;lt;/time&amp;gt;.&amp;lt;/p&amp;gt;"&lt;/span&gt;
+
+  &lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;finish&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="footnotes"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+
+&lt;li id="fn1"&gt;
+&lt;p&gt;&lt;a href="https://github.com/rack/rack/blob/0ba88559cd15ffc2b7a0fed7a05d62622349ea6f/SPEC.rdoc#label-The+Environment" rel="nofollow noopener noreferrer"&gt;https://github.com/rack/rack/blob/0ba88559cd15ffc2b7a0fed7a05d62622349ea6f/SPEC.rdoc#label-The+Environment&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+  </entry>
   <entry>
     <title>Generating secure tokens from an array in Ruby</title>
     <link rel="alternate" href="https://dingus.clowder.name/2022/07/08/generating-secure-tokens-from-an-array-in-ruby.html"/>
@@ -203,106 +343,6 @@ native support for Postgres cursors.&lt;/p&gt;
 
 &lt;li id="fn2"&gt;
 &lt;p&gt;&lt;a href="https://www.postgresql.org/docs/current/sql-declare.html" rel="nofollow noopener noreferrer"&gt;https://www.postgresql.org/docs/current/sql-declare.html&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref2"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-
-&lt;/ol&gt;
-&lt;/div&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Recursive SQL</title>
-    <link rel="alternate" href="https://dingus.clowder.name/2022/03/04/recursive-sql.html"/>
-    <id>https://dingus.clowder.name/2022/03/04/recursive-sql.html</id>
-    <published>2022-03-04T12:25:00+00:00</published>
-    <updated>2022-06-16T14:58:28+01:00</updated>
-    <author>
-      <name>Article Author</name>
-    </author>
-    <summary type="html">Learn how to write recursive SQL queries in Postgres.</summary>
-    <content type="html">&lt;p&gt;This week I encountered SQL&amp;rsquo;s recursive query syntax&lt;sup id="fnref1"&gt;&lt;a href="#fn1"&gt;1&lt;/a&gt;&lt;/sup&gt; for the first time,
-using the &lt;code class="prettyprint"&gt;WITH RECURSIVE&lt;/code&gt; common table expression syntax.&lt;/p&gt;
-
-&lt;p&gt;Given an sample hierarchy of book genres we can build up a table of breadcumbs:&lt;/p&gt;
-
-&lt;table&gt;&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;id&lt;/th&gt;
-&lt;th&gt;name&lt;/th&gt;
-&lt;th&gt;parent_id&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;td&gt;Science Fiction&lt;/td&gt;
-&lt;td&gt;NULL&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;Dystopian&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;3&lt;/td&gt;
-&lt;td&gt;Cyberpunk&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;Space opera&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight sql"&gt;&lt;code&gt;&lt;span class="k"&gt;WITH&lt;/span&gt; &lt;span class="k"&gt;RECURSIVE&lt;/span&gt; &lt;span class="n"&gt;linages&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
-  &lt;span class="c1"&gt;-- The non-recursive base case, top-level parents only&lt;/span&gt;
-  &lt;span class="k"&gt;SELECT&lt;/span&gt;
-    &lt;span class="n"&gt;ARRAY&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;genres&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;genre_names&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-    &lt;span class="n"&gt;genres&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;tail_id&lt;/span&gt;
-  &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;genres&lt;/span&gt;
-  &lt;span class="k"&gt;WHERE&lt;/span&gt; &lt;span class="n"&gt;genres&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parent_id&lt;/span&gt; &lt;span class="k"&gt;IS&lt;/span&gt; &lt;span class="k"&gt;NULL&lt;/span&gt;
-
-  &lt;span class="k"&gt;UNION&lt;/span&gt; &lt;span class="k"&gt;ALL&lt;/span&gt;
-
-  &lt;span class="c1"&gt;-- Recursively join sub-genres to their parent&lt;/span&gt;
-  &lt;span class="k"&gt;SELECT&lt;/span&gt;
-    &lt;span class="n"&gt;linages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;genre_names&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="n"&gt;genres&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;genre_names&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-    &lt;span class="n"&gt;genres&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;tail_id&lt;/span&gt;
-  &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;genres&lt;/span&gt;
-  &lt;span class="k"&gt;INNER&lt;/span&gt; &lt;span class="k"&gt;JOIN&lt;/span&gt; &lt;span class="n"&gt;linages&lt;/span&gt; &lt;span class="k"&gt;ON&lt;/span&gt; &lt;span class="n"&gt;genres&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parent_id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;linages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tail_id&lt;/span&gt;
-&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="n"&gt;ARRAY_TO_STRING&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;linages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;genre_names&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;' → '&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;breadcumb&lt;/span&gt;
-&lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;linages&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The result contains every generation of the recursion.&lt;/p&gt;
-
-&lt;table&gt;&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;breadcumb&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Science Fiction&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Science Fiction → Space opera&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Science Fiction → Dystopian&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Science Fiction → Dystopian → Cyberpunk&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
-
-&lt;p&gt;Early in my career I saw SQL as something to avoid or abstract away, but with
-time I&amp;rsquo;ve come to love munging data using SQL.&lt;/p&gt;
-
-&lt;div class="footnotes"&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-
-&lt;li id="fn1"&gt;
-&lt;p&gt;&lt;a href="https://modern-sql.com/caniuse/T131" rel="nofollow noopener noreferrer"&gt;https://modern-sql.com/caniuse/T131&lt;/a&gt;&amp;nbsp;&lt;a href="#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 
 &lt;/ol&gt;

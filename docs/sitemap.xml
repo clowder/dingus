@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://dingus.clowder.name/2022/07/29/rack-cheatsheet.html</loc>
+    <lastmod>2022-07-29T13:00:00+01:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://dingus.clowder.name/2022/07/08/generating-secure-tokens-from-an-array-in-ruby.html</loc>
     <lastmod>2022-07-08T09:46:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
